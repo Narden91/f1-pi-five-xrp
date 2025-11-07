@@ -1,20 +1,21 @@
-# XRP Hackathon Platform
+# 🏎️ F1 AI Racing - XRP Ledger Game
 
-A professional full-stack application platform for XRP Ledger projects, featuring advanced wallet management, real-time balance tracking, and seamless XRP payments on the testnet. Built with modern technologies and optimized for hackathons.
+A competitive AI racing game built on XRP Ledger. Train your AI race car, compete in races, and win XPF tokens. All performance calculations happen server-side with secret formulas to ensure fair play. Built with modern technologies and ready for demo.
 
 ## ✨ Features
 
+### F1 AI Racing Game
+- **🛠️ Train Your Car**: Spend 1 XPF to train - secretly adjusts hidden performance flags by ±20
+- **🏁 Enter Races**: Pay 1 XPF entry fee - server computes speed using secret AI formula
+- **🏆 Win Big**: Fastest car wins 100 XPF prize
+- **🔒 Fair Play**: All flags and formulas stay server-side - no cheating possible
+- **📊 Race Results**: View winner, your rank, and participants (speed calculations remain secret)
+
 ### Wallet Management
 - **Create New Wallets**: Generate new XRP wallets with automatic testnet funding
-- **Import Existing Wallets**: Import wallets using seed phrases
+- **Import Existing Wallets**: Import wallets using seed phrases or Gem Wallet
 - **Secure Storage**: Cryptographically secure wallet operations
-- **Balance Tracking**: Real-time XRP balance monitoring with auto-refresh
-
-### Payment Operations
-- **Custom Payments**: Send XRP with custom amounts to any address
-- **Quick Payments**: Pre-configured quick payment options
-- **Transaction History**: Track all your payments with detailed status
-- **Transaction Validation**: Real-time transaction result feedback
+- **Balance Tracking**: Real-time XPF/XRP balance monitoring with auto-refresh
 
 ### Professional UI/UX
 - **Modern Design**: Beautiful gradient-based interface with glass morphism effects
@@ -110,9 +111,12 @@ Import the collection from `postman/XRP_Hackathon_API.postman_collection.json`
 
 ### Using the UI
 1. Visit http://localhost:5173
-2. Click "Create New Wallet" to generate a funded testnet wallet
-3. Use the dashboard to send payments and track transactions
-4. Try the "Send Payment" modal for custom amounts
+2. Click "Get Started" or "Create New Wallet" to generate a funded testnet wallet
+3. Use the dashboard to:
+   - **Train Car**: Click "Train Car" to spend 1 XPF and improve hidden stats
+   - **Enter Race**: Click "Enter Race" to compete for 100 XPF prize
+   - **View Results**: See race outcomes without revealing secret formulas
+4. Monitor your training count and race history
 
 ### Using cURL
 ```bash

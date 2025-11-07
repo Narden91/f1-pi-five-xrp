@@ -6,10 +6,10 @@ const CTA = ({ onGetStarted }) => {
       <div className="w-full px-8 text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Ready to get started?
+            Ready to race?
           </h2>
           <p className="text-xl text-gray-300 mb-12">
-            Join thousands of users already using XRP Ledger for fast, secure digital payments.
+            Join the F1 AI Racing competition. Train your car, enter races, and win XPF tokens on the XRP Ledger.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -28,20 +28,20 @@ const CTA = ({ onGetStarted }) => {
             </button>
           </div>
 
-          {/* Trust indicators */}
+          {/* Racing stats */}
           <div className="mt-16 pt-16 border-t border-gray-800">
             <div className="grid grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-white mb-2">99.99%</div>
-                <div className="text-sm text-gray-400">Uptime</div>
+                <div className="text-3xl font-bold text-white mb-2">1 XPF</div>
+                <div className="text-sm text-gray-400">Per Training</div>
               </div>
               <div className="border-x border-gray-800">
-                <div className="text-3xl font-bold text-white mb-2">10M+</div>
-                <div className="text-sm text-gray-400">Transactions</div>
+                <div className="text-3xl font-bold text-white mb-2">100 XPF</div>
+                <div className="text-sm text-gray-400">Winner Prize</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-white mb-2">150+</div>
-                <div className="text-sm text-gray-400">Countries</div>
+                <div className="text-3xl font-bold text-white mb-2">Secret</div>
+                <div className="text-sm text-gray-400">AI Formula</div>
               </div>
             </div>
           </div>

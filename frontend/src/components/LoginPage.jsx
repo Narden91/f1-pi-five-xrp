@@ -81,11 +81,12 @@ const LoginPage = ({ onLogin, onBack }) => {
 
         {/* Logo/Title */}
         <div className="text-center mb-8">
+          <div className="text-6xl mb-4">🏎️</div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome back
+            F1 AI Racing
           </h1>
           <p className="text-gray-600">
-            Connect your wallet to continue
+            Connect your XRP wallet to start racing
           </p>
         </div>
 
@@ -181,7 +182,7 @@ const LoginPage = ({ onLogin, onBack }) => {
 
         {/* Footer Note */}
         <p className="mt-8 text-center text-sm text-gray-500">
-          This is a testnet environment. Safe for development and testing.
+          🏁 Testnet racing environment • Train for 1 XPF • Win 100 XPF per race
         </p>
       </div>
     </div>

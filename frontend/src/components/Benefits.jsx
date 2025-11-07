@@ -3,19 +3,19 @@ import PropTypes from 'prop-types'
 const Benefits = ({ onGetStarted }) => {
   const benefits = [
     {
-      title: 'Start in minutes',
-      description: 'Create your wallet and start sending XRP in less time than it takes to make coffee.',
+      title: 'Start racing instantly',
+      description: 'Create your XRP wallet and get funded instantly on testnet. Start training your AI car right away.',
       image: '🚀',
     },
     {
-      title: 'No hidden fees',
-      description: 'What you see is what you pay. Transparent pricing with no surprises.',
-      image: '💎',
+      title: 'Fair competition',
+      description: 'Secret speed formulas ensure no one can game the system. Train strategically to improve performance.',
+      image: '⚖️',
     },
     {
-      title: 'Developer friendly',
-      description: 'Built with modern tools and comprehensive APIs for seamless integration.',
-      image: '💻',
+      title: 'Real blockchain rewards',
+      description: 'Win 100 XPF per race. All transactions verified on XRP Ledger for transparency and security.',
+      image: '�',
     },
   ]
 
@@ -26,9 +26,9 @@ const Benefits = ({ onGetStarted }) => {
           {/* Left side - Benefits list */}
           <div>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Everything you need,
+              Race smarter,
               <br />
-              nothing you don't
+              not harder
             </h2>
             
             <div className="space-y-8">
@@ -59,50 +59,50 @@ const Benefits = ({ onGetStarted }) => {
           <div className="relative">
             <div className="relative bg-white rounded-3xl shadow-2xl p-8 border border-gray-200">
               <div className="space-y-4">
-                {/* Mock wallet interface */}
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
-                  <div className="text-sm opacity-80 mb-2">Total Balance</div>
-                  <div className="text-4xl font-bold mb-4">1,234.56 XRP</div>
-                  <div className="text-sm opacity-80">≈ $2,469.12 USD</div>
+                {/* Mock racing interface */}
+                <div className="bg-gradient-to-br from-red-500 via-orange-500 to-yellow-600 rounded-2xl p-6 text-white">
+                  <div className="text-sm opacity-80 mb-2">🏎️ Your Racing Wallet</div>
+                  <div className="text-4xl font-bold mb-4">250 XPF</div>
+                  <div className="text-sm opacity-80">Ready to race</div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <div className="text-2xl mb-2">⚡</div>
-                    <div className="text-sm text-gray-600 mb-1">Send</div>
-                    <div className="text-lg font-bold text-gray-900">Instant</div>
+                    <div className="text-2xl mb-2">🛠️</div>
+                    <div className="text-sm text-gray-600 mb-1">Trainings</div>
+                    <div className="text-lg font-bold text-gray-900">12</div>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <div className="text-2xl mb-2">🔒</div>
-                    <div className="text-sm text-gray-600 mb-1">Security</div>
-                    <div className="text-lg font-bold text-gray-900">Max</div>
+                    <div className="text-2xl mb-2">🏆</div>
+                    <div className="text-sm text-gray-600 mb-1">Races Won</div>
+                    <div className="text-lg font-bold text-gray-900">3</div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">✓</div>
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-xl">🏁</div>
                       <div>
-                        <div className="font-semibold text-gray-900">Payment Sent</div>
-                        <div className="text-sm text-gray-600">2 minutes ago</div>
+                        <div className="font-semibold text-gray-900">Race Won!</div>
+                        <div className="text-sm text-gray-600">5 minutes ago</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-gray-900">-50 XRP</div>
+                      <div className="font-bold text-green-600">+100 XPF</div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">↓</div>
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl">🛠️</div>
                       <div>
-                        <div className="font-semibold text-gray-900">Received</div>
-                        <div className="text-sm text-gray-600">1 hour ago</div>
+                        <div className="font-semibold text-gray-900">Car Trained</div>
+                        <div className="text-sm text-gray-600">15 minutes ago</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-green-600">+100 XRP</div>
+                      <div className="font-bold text-gray-900">-1 XPF</div>
                     </div>
                   </div>
                 </div>

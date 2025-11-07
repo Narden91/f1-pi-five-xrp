@@ -9,6 +9,7 @@ A modern, modular React application for XRP Ledger wallet management and transac
 - **Responsive Design**: Mobile-first design with TailwindCSS
 - **Real-time Updates**: Auto-refreshing balance and transaction status
 - **Type Safety**: PropTypes validation for component props
+- **F1-AI Racing Demo**: Abstract training & racing interface (secret performance logic lives server-side)
 
 ## Project Structure
 
@@ -37,6 +38,13 @@ src/
 ## Key Components
 
 ### Custom Hook: `useWallet`
+### Custom Hook: `useRacing`
+Manages abstract racing state without exposing secrets:
+- Training sessions counter (each costs 1 XPF and applies hidden ±<20 flag deltas server-side)
+- Enter race flow (costs 1 XPF; winner takes 100 XPF)
+- Redacted race results (winner, your rank, participants count)
+
+No raw flags or speed formula ever appear in the UI.
 Manages all wallet-related state and operations:
 - Wallet creation and funding
 - Balance checking and auto-refresh
@@ -78,6 +86,7 @@ npm run lint
 - **TailwindCSS**: Utility-first CSS framework
 - **xrpl.js**: XRP Ledger JavaScript library
 - **PropTypes**: Runtime type checking for React props
+- **Hackathon Game Layer**: Thin abstraction over backend endpoints (`/race/train`, `/race/enter`, `/race/latest`)
 
 ## Architecture Benefits
 
@@ -86,3 +95,28 @@ npm run lint
 3. **Testability**: Isolated components and hooks are easier to unit test
 4. **Performance**: Custom hooks optimize re-renders and state management
 5. **Scalability**: Structure supports easy addition of new features and components
+6. **Security by Design**: Frontend never computes or reveals secret speed formula or hidden training flags.
+
+## Racing Game UI Overview
+
+| Action | Cost | Backend Responsibility | Frontend Display |
+|--------|------|------------------------|------------------|
+| Train Car | 1 XPF | Validate XPF payment; apply ±<20 random deltas to secret flags | Increment training count; keep speed hidden (???). |
+| Enter Race | 1 XPF | Validate payment; compute secret speed; determine winner and rank | Show winner (masked address), your rank, prize indicator. |
+
+### Adding Environment Variables
+Extend `.env` (see `.env.example`):
+```
+VITE_XPF_ISSUER=rXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   # Issuer address for XPF token
+VITE_GAME_TREASURY=rYYYYYYYYYYYYYYYYYYYYYYYYYYYYY  # Treasury/collector for training & race fees
+```
+
+### Demo Flow
+1. Create or connect wallet (Gem Wallet optional).
+2. Press "Train Car" a few times: balance decreases by 1 XPF each (backend handles payment & mutation).
+3. Press "Enter Race": race result card appears once backend completes.
+4. Repeat; training count accumulates, but speed score stays secret.
+
+### Important Security Note
+Do NOT attempt to derive speed or expose underlying flags client-side. All sensitive computations remain on the server.
+

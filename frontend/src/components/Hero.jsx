@@ -14,16 +14,16 @@ const Hero = ({ onGetStarted }) => {
         {/* Main heading */}
         <div className="animate-fadeIn pt-32">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 leading-tight">
-            Digital payments
+            🏎️ F1 AI Racing
             <br />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              made simple
+            <span className="bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
+              Train. Race. Win.
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Experience the future of XRP Ledger with lightning-fast transactions,
-            enterprise-grade security, and zero complexity.
+            Train your AI racing car with XPF tokens. Compete in races where speed is computed server-side.
+            Winner takes 100 XPF. No secrets revealed—pure skill and strategy.
           </p>
 
           {/* CTA Buttons */}
@@ -48,16 +48,16 @@ const Hero = ({ onGetStarted }) => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 w-full pb-16 animate-slideUp">
           <div className="text-center">
-            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">3-5s</div>
-            <div className="text-sm text-gray-600 uppercase tracking-wide">Settlement Time</div>
+            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">1 XPF</div>
+            <div className="text-sm text-gray-600 uppercase tracking-wide">Training Cost</div>
           </div>
           <div className="text-center sm:border-x border-gray-200">
-            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">$0.00012</div>
-            <div className="text-sm text-gray-600 uppercase tracking-wide">Avg Transaction Cost</div>
+            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">100 XPF</div>
+            <div className="text-sm text-gray-600 uppercase tracking-wide">Winner Prize</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">1500+</div>
-            <div className="text-sm text-gray-600 uppercase tracking-wide">Transactions/Second</div>
+            <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">???</div>
+            <div className="text-sm text-gray-600 uppercase tracking-wide">Speed Formula (Secret)</div>
           </div>
         </div>
       </div>

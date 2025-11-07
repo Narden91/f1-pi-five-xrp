@@ -7,6 +7,25 @@ export const useWallet = () => {
   const [loading, setLoading] = useState(false)
   const [txResult, setTxResult] = useState(null)
   const [transactions, setTransactions] = useState([])
+  
+  // Generic signer for arbitrary XRPL transactions (tx object). Useful for issued currency (XPF) ops.
+  const signAndSubmit = useCallback(async (tx) => {
+    if (!wallet) throw new Error('No wallet available')
+    const client = new xrpl.Client('wss://s.altnet.rippletest.net:51233')
+    await client.connect()
+    try {
+      const senderWallet = xrpl.Wallet.fromSeed(wallet.seed)
+      const prepared = await client.autofill({
+        Account: wallet.address,
+        ...tx,
+      })
+      const signed = senderWallet.sign(prepared)
+      const result = await client.submitAndWait(signed.tx_blob)
+      return result
+    } finally {
+      await client.disconnect()
+    }
+  }, [wallet])
 
   const createWallet = useCallback(async (seed = '') => {
     setLoading(true)
@@ -139,6 +158,7 @@ export const useWallet = () => {
     createWallet,
     sendPayment,
     refreshBalance,
-    resetWallet
+    resetWallet,
+    signAndSubmit,
   }
 }

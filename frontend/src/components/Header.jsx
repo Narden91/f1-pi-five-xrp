@@ -32,8 +32,8 @@ const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) 
               className="flex-shrink-0 group cursor-pointer"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                  <span className="text-white text-2xl font-bold">X</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                  <span className="text-white text-2xl font-bold">🏎️</span>
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">

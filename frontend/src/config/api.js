@@ -85,6 +85,24 @@ class ApiService {
   async healthCheck() {
     return this.get('/health')
   }
+
+  // --- Racing Game Endpoints (frontend-only abstraction) ---
+  // These assume backend secret logic; frontend must NEVER send or receive raw flags or formulas.
+  async trainCar(address) {
+    // Costs 1 XPF on-chain; backend validates payment & applies ±<20 random deltas per secret flag set
+    return this.post('/race/train', { address })
+  }
+
+  async enterRace(address) {
+    // Costs 1 XPF; backend computes secret speed formula and returns abstract ranking info
+    return this.post('/race/enter', { address })
+  }
+
+  async getLatestRace(address) {
+    // Fetch latest race summary; backend must redact secret values
+    const query = address ? `?address=${encodeURIComponent(address)}` : ''
+    return this.get(`/race/latest${query}`)
+  }
 }
 
 export const apiService = new ApiService()

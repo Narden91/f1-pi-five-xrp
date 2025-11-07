@@ -16,7 +16,8 @@ function App() {
     createWallet,
     sendPayment,
     refreshBalance,
-    resetWallet
+    resetWallet,
+    signAndSubmit,
   } = useWallet()
 
   const handleGetStarted = async () => {
@@ -93,10 +94,10 @@ function App() {
                   onClick={handleHomeClick}
                   className="flex items-center space-x-3 cursor-pointer group"
                 >
-                  <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
-                    <span className="text-white text-2xl font-bold">X</span>
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-600 rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
+                    <span className="text-white text-2xl font-bold">🏎️</span>
                   </div>
-                  <h1 className="text-xl font-bold text-gray-900">XRP Ledger</h1>
+                  <h1 className="text-xl font-bold text-gray-900">F1 AI Racing</h1>
                 </button>
                 <button
                   onClick={handleLoginClick}
@@ -129,6 +130,7 @@ function App() {
             onRefreshBalance={refreshBalance}
             onSendPayment={sendPayment}
             onResetWallet={handleResetWallet}
+            signer={signAndSubmit}
           />
         </main>
       )}

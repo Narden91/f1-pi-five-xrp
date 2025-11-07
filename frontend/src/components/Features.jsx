@@ -1,28 +1,28 @@
 const Features = () => {
   const features = [
     {
-      icon: '⚡',
-      title: 'Lightning Fast',
-      description: 'Transactions settle in 3-5 seconds. No more waiting hours or days for confirmations.',
+      icon: '🛠️',
+      title: 'Train Your Car',
+      description: 'Spend 1 XPF to train your car. Each training randomly adjusts hidden performance flags by ±20.',
       color: 'from-blue-500 to-cyan-500',
     },
     {
+      icon: '🏁',
+      title: 'Enter Races',
+      description: 'Pay 1 XPF to enter a race. Server-side AI computes speed using secret formulas. Fastest wins!',
+      color: 'from-red-500 to-orange-500',
+    },
+    {
+      icon: '🏆',
+      title: 'Win Big',
+      description: 'Winner of each race takes home 100 XPF. Rankings shown, but speed calculations stay secret.',
+      color: 'from-yellow-500 to-amber-500',
+    },
+    {
       icon: '🔒',
-      title: 'Bank-Level Security',
-      description: 'Enterprise-grade cryptographic security protecting every transaction on the ledger.',
+      title: 'Secure & Fair',
+      description: 'All transactions on XRP Ledger. No cheating—flags and formulas never leave the server.',
       color: 'from-purple-500 to-pink-500',
-    },
-    {
-      icon: '💰',
-      title: 'Minimal Fees',
-      description: 'Transaction costs average just $0.00012. Send any amount without breaking the bank.',
-      color: 'from-green-500 to-emerald-500',
-    },
-    {
-      icon: '🌍',
-      title: 'Global Network',
-      description: 'Access a worldwide network of validators ensuring decentralization and reliability.',
-      color: 'from-orange-500 to-red-500',
     },
   ]
 
@@ -31,10 +31,10 @@ const Features = () => {
       <div className="w-full px-8">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Built for the future
+            How F1 AI Racing Works
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Everything you need to manage digital payments with confidence
+            Train smart, race hard, and compete for XPF prizes on the XRP Ledger
           </p>
         </div>
 
