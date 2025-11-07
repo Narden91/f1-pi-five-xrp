@@ -16,21 +16,13 @@ export const useGemWallet = () => {
 
     const checkInstallation = async () => {
       try {
-        console.log(' Checking GemWallet installation...')
         const result = await isInstalled()
         
         if (mounted) {
           setIsGemInstalled(result)
           setIsChecking(false)
-          
-          if (result) {
-            console.log(' GemWallet is installed!')
-          } else {
-            console.log(' GemWallet is not installed')
-          }
         }
-      } catch (err) {
-        console.error(' Error checking GemWallet installation:', err)
+      } catch {
         if (mounted) {
           setIsGemInstalled(false)
           setIsChecking(false)
@@ -75,8 +67,7 @@ export const useGemWallet = () => {
       }
       
       throw new Error('Failed to fetch balance')
-    } catch (err) {
-      console.error(' Balance fetch error:', err)
+    } catch {
       return null
     }
   }, [])
@@ -91,10 +82,7 @@ export const useGemWallet = () => {
     }
 
     try {
-      console.log(' Connecting to GemWallet...')
-      
       const addressResponse = await getAddress()
-      console.log(' Address response:', addressResponse)
       
       if (!addressResponse || !addressResponse.result || !addressResponse.result.address) {
         throw new Error('User rejected the request or no address returned')
@@ -103,18 +91,15 @@ export const useGemWallet = () => {
       const walletAddress = addressResponse.result.address
       const walletPublicKey = addressResponse.result.publicKey || null
 
-      console.log(' Got wallet address:', walletAddress)
-
       let networkInfo = 'testnet'
       try {
         const networkResponse = await getNetwork()
-        console.log(' Network response:', networkResponse)
         
         if (networkResponse && networkResponse.result) {
           networkInfo = networkResponse.result.network || networkResponse.result.name || 'testnet'
         }
-      } catch (netErr) {
-        console.warn(' Could not fetch network, assuming testnet:', netErr)
+      } catch {
+        // Could not fetch network, use default testnet
       }
 
       const networkLower = networkInfo.toLowerCase()
@@ -122,19 +107,13 @@ export const useGemWallet = () => {
         throw new Error('Please switch to Testnet in GemWallet settings. Currently on: ' + networkInfo)
       }
 
-      console.log(' Network validated:', networkInfo)
-
-      console.log(' Fetching balance...')
       const walletBalance = await fetchBalance(walletAddress)
-      console.log(' Balance:', walletBalance, 'XRP')
 
       setAddress(walletAddress)
       setPublicKey(walletPublicKey)
       setBalance(walletBalance)
       setNetwork(networkInfo)
       setIsConnected(true)
-
-      console.log(' Successfully connected to GemWallet!')
 
       return { 
         success: true, 
@@ -146,7 +125,6 @@ export const useGemWallet = () => {
     } catch (err) {
       const errorMessage = err.message || 'Failed to connect to GemWallet'
       setError(errorMessage)
-      console.error(' GemWallet connection error:', err)
       return { success: false, error: errorMessage }
     }
   }, [isGemInstalled, fetchBalance])
@@ -158,7 +136,6 @@ export const useGemWallet = () => {
     setPublicKey(null)
     setIsConnected(false)
     setError(null)
-    console.log(' Disconnected from GemWallet')
   }, [])
 
   const getBalance = useCallback(async () => {
@@ -173,13 +150,10 @@ export const useGemWallet = () => {
 
   const checkInstallation = useCallback(async () => {
     try {
-      console.log(' Manually checking GemWallet installation...')
       const result = await isInstalled()
       setIsGemInstalled(result)
-      console.log(result ? ' Installed' : ' Not installed')
       return result
-    } catch (err) {
-      console.error(' Check failed:', err)
+    } catch {
       setIsGemInstalled(false)
       return false
     }
