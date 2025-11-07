@@ -7,10 +7,38 @@ export const useWallet = () => {
   const [loading, setLoading] = useState(false)
   const [txResult, setTxResult] = useState(null)
   const [transactions, setTransactions] = useState([])
+  const [connectionType, setConnectionType] = useState(null) // 'created' | 'gemwallet'
   
   // Generic signer for arbitrary XRPL transactions (tx object). Useful for issued currency (XPF) ops.
   const signAndSubmit = useCallback(async (tx) => {
     if (!wallet) throw new Error('No wallet available')
+    
+    // If using GemWallet, delegate to GemWallet for signing
+    if (connectionType === 'gemwallet') {
+      try {
+        if (!window.gemWallet) {
+          throw new Error('GemWallet not available')
+        }
+        
+        const response = await window.gemWallet.signTransaction({ 
+          transaction: {
+            Account: wallet.address,
+            ...tx,
+          }
+        })
+        
+        if (response.result) {
+          return response.result
+        } else {
+          throw new Error('Transaction signing failed')
+        }
+      } catch (err) {
+        console.error('GemWallet signing error:', err)
+        throw new Error(err.message || 'Failed to sign transaction with GemWallet')
+      }
+    }
+    
+    // Local wallet signing (original logic)
     const client = new xrpl.Client('wss://s.altnet.rippletest.net:51233')
     await client.connect()
     try {
@@ -25,11 +53,28 @@ export const useWallet = () => {
     } finally {
       await client.disconnect()
     }
-  }, [wallet])
+  }, [wallet, connectionType])
 
-  const createWallet = useCallback(async (seed = '') => {
+  const createWallet = useCallback(async (options = {}) => {
+    const { seed = '', type = 'created', gemWalletAddress = null, balance: initialBalance = null } = options
+    
     setLoading(true)
     try {
+      // Handle GemWallet connection
+      if (type === 'gemwallet' && gemWalletAddress) {
+        // Set up wallet using GemWallet address
+        setWallet({
+          address: gemWalletAddress,
+          seed: null, // GemWallet doesn't expose seed
+          type: 'gemwallet'
+        })
+        setBalance(initialBalance)
+        setConnectionType('gemwallet')
+        setLoading(false)
+        return
+      }
+      
+      // Handle local wallet creation/import (existing logic)
       const client = new xrpl.Client('wss://s.altnet.rippletest.net:51233')
       await client.connect()
 
@@ -46,7 +91,7 @@ export const useWallet = () => {
             ledger_index: 'validated'
           })
           setBalance(xrpl.dropsToXrp(response.result.account_data.Balance))
-        } catch (err) {
+        } catch {
           // Account doesn't exist, fund it with 10 XRP
           await client.fundWallet(newWallet, { amount: '10' })
           setBalance('10')
@@ -77,6 +122,7 @@ export const useWallet = () => {
         address: newWallet.address,
         seed: newWallet.seed
       })
+      setConnectionType('created')
 
       await client.disconnect()
     } catch (error) {
@@ -163,6 +209,7 @@ export const useWallet = () => {
     setBalance(null)
     setTxResult(null)
     setTransactions([])
+    setConnectionType(null)
   }, [])
 
   useEffect(() => {
@@ -178,6 +225,7 @@ export const useWallet = () => {
     loading,
     txResult,
     transactions,
+    connectionType,
     createWallet,
     sendPayment,
     refreshBalance,

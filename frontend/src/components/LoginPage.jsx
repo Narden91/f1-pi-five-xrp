@@ -7,26 +7,74 @@ const LoginPage = ({ onLogin, onBack }) => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   
-  const { isInstalled, connect } = useGemWallet()
+  const { isInstalled, connect, checkInstallation, isChecking } = useGemWallet()
+
+  // Debug function to check GemWallet
+  const checkGemWalletDebug = async () => {
+    console.log('=== GemWallet Debug Info (@gemwallet/api) ===')
+    console.log('isInstalled state:', isInstalled)
+    console.log('isChecking state:', isChecking)
+    
+    // Force recheck
+    const recheckResult = await checkInstallation()
+    console.log('Recheck result:', recheckResult)
+    
+    // Also check window.gemWallet for backwards compatibility
+    console.log('window.gemWallet exists:', typeof window.gemWallet !== 'undefined')
+    console.log('window.gemWallet type:', typeof window.gemWallet)
+    
+    // Check if running in correct context
+    console.log('Page URL:', window.location.href)
+    console.log('Is HTTPS or localhost:', window.location.protocol === 'https:' || window.location.hostname === 'localhost')
+    console.log('Document readyState:', document.readyState)
+    
+    let message = `GemWallet SDK Detection:\n\n`
+    message += `isInstalled: ${isInstalled}\n`
+    message += `Recheck result: ${recheckResult}\n`
+    message += `isChecking: ${isChecking}\n\n`
+    message += 'Check console (F12) for full details.'
+    
+    alert(message)
+  }
 
   const handleGemWalletConnect = useCallback(async () => {
     setError('')
     setIsLoading(true)
 
     try {
+      // 1. Check installation
+      if (!isInstalled) {
+        setError('GemWallet is not installed. Please install it from gemwallet.app')
+        setIsLoading(false)
+        return
+      }
+
+      // 2. Connect to GemWallet
       const result = await connect()
       
-      if (result.success) {
-        await onLogin({ type: 'gem', address: result.address })
-      } else {
-        setError(result.error || 'Failed to connect to Gem Wallet')
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to connect to GemWallet')
       }
+
+      // 3. Validate network (already done in connect, but double-check)
+      if (result.network && result.network.toLowerCase() !== 'testnet') {
+        throw new Error(`Please switch to Testnet in your GemWallet settings. Currently connected to: ${result.network}`)
+      }
+
+      // 4. Pass data to parent (App.jsx)
+      await onLogin({ 
+        type: 'gem', 
+        address: result.address,
+        balance: result.balance,
+        publicKey: result.publicKey,
+        network: result.network
+      })
     } catch (err) {
-      setError(err.message || 'Failed to connect to Gem Wallet')
+      setError(err.message || 'Failed to connect to GemWallet')
     } finally {
       setIsLoading(false)
     }
-  }, [connect, onLogin])
+  }, [isInstalled, connect, onLogin])
 
   const handleManualLogin = useCallback(async (e) => {
     e.preventDefault()
@@ -94,22 +142,50 @@ const LoginPage = ({ onLogin, onBack }) => {
         <div className="mb-6">
           <button
             onClick={handleGemWalletConnect}
-            disabled={isLoading}
+            disabled={isLoading || !isInstalled || isChecking}
             className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-3"
           >
             <span className="text-2xl">💎</span>
-            <span>{isInstalled ? 'Connect Gem Wallet' : 'Install Gem Wallet'}</span>
+            <span>
+              {isLoading ? 'Connecting...' : isChecking ? 'Checking...' : (isInstalled ? 'Login with Gem Wallet' : 'Gem Wallet Not Detected')}
+            </span>
           </button>
-          {!isInstalled && (
-            <p className="mt-2 text-xs text-center text-gray-500">
-              <a 
-                href="https://gemwallet.app/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                Get Gem Wallet →
-              </a>
+          {!isInstalled && !isChecking && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-xs text-yellow-800 font-semibold mb-2">
+                ⚠️ GemWallet extension is not accessible on this page
+              </p>
+              <p className="text-xs text-yellow-700 mb-2">
+                Please configure GemWallet permissions:
+              </p>
+              <ol className="text-xs text-yellow-700 space-y-1 ml-4 list-decimal">
+                <li>Go to <code className="bg-yellow-100 px-1 rounded">chrome://extensions/</code></li>
+                <li>Find <strong>GemWallet</strong> → Click <strong>Details</strong></li>
+                <li>Under "Site access" → Select <strong>"On all sites"</strong></li>
+                <li>Click the button below to refresh detection</li>
+              </ol>
+              <div className="mt-3 flex gap-2">
+                <a 
+                  href="https://gemwallet.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block text-xs text-blue-600 hover:underline font-semibold"
+                >
+                  Install GemWallet →
+                </a>
+                <button
+                  onClick={checkInstallation}
+                  className="ml-auto px-3 py-1 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 rounded text-xs font-semibold transition-colors"
+                >
+                  🔄 Refresh Detection
+                </button>
+              </div>
+            </div>
+          )}
+          {isInstalled && !isLoading && (
+            <p className="mt-2 text-xs text-center text-green-600 flex items-center justify-center gap-1">
+              <span>✓</span>
+              <span>Gem Wallet detected and ready</span>
             </p>
           )}
         </div>
@@ -184,6 +260,14 @@ const LoginPage = ({ onLogin, onBack }) => {
         <p className="mt-8 text-center text-sm text-gray-500">
           🏁 Testnet racing environment • Train for 1 XPF • Win 100 XPF per race
         </p>
+        
+        {/* Debug Button */}
+        <button
+          onClick={checkGemWalletDebug}
+          className="mt-4 w-full px-3 py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          🔧 Debug GemWallet Detection
+        </button>
       </div>
     </div>
   )

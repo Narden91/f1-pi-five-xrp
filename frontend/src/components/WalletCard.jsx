@@ -2,7 +2,9 @@ import PropTypes from 'prop-types'
 import { formatAddress, formatBalance } from '../utils'
 import CopyButton from './CopyButton'
 
-const WalletCard = ({ wallet, balance, onRefresh }) => {
+const WalletCard = ({ wallet, balance, onRefresh, connectionType }) => {
+  const isGemWallet = connectionType === 'gemwallet' || (wallet && !wallet.seed)
+  
   return (
     <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-orange-100 hover:shadow-2xl transition-all duration-300">
       <div className="flex items-center justify-between mb-6">
@@ -59,7 +61,7 @@ const WalletCard = ({ wallet, balance, onRefresh }) => {
         </div>
       </div>
 
-      {wallet?.seed && (
+      {wallet?.seed && !isGemWallet && (
         <div className="mt-6 bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl border-2 border-yellow-200">
           <div className="flex items-start space-x-3">
             <div className="text-2xl">⚠️</div>
@@ -78,6 +80,20 @@ const WalletCard = ({ wallet, balance, onRefresh }) => {
           </div>
         </div>
       )}
+      
+      {isGemWallet && (
+        <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-xl border-2 border-purple-200">
+          <div className="flex items-start space-x-3">
+            <div className="text-2xl">💎</div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-purple-800 mb-1">GemWallet Connected</h4>
+              <p className="text-sm text-purple-700">
+                Your wallet is secured by GemWallet. All transactions require approval through the extension.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -88,7 +104,8 @@ WalletCard.propTypes = {
     seed: PropTypes.string
   }),
   balance: PropTypes.string,
-  onRefresh: PropTypes.func.isRequired
+  onRefresh: PropTypes.func.isRequired,
+  connectionType: PropTypes.string
 }
 
 export default WalletCard

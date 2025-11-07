@@ -15,6 +15,7 @@ const Dashboard = ({
   loading,
   transactions,
   activeTab,
+  connectionType,
   onRefreshBalance,
   onBalanceUpdate,
   signer,
@@ -101,6 +102,7 @@ const Dashboard = ({
         wallet={wallet}
         balance={balance}
         onRefresh={onRefreshBalance}
+        connectionType={connectionType}
       />
 
       {/* Garage Section */}
@@ -172,6 +174,7 @@ Dashboard.propTypes = {
   loading: PropTypes.bool.isRequired,
   transactions: PropTypes.array.isRequired,
   activeTab: PropTypes.string.isRequired,
+  connectionType: PropTypes.string,
   onRefreshBalance: PropTypes.func.isRequired,
   onBalanceUpdate: PropTypes.func,
   signer: PropTypes.func,

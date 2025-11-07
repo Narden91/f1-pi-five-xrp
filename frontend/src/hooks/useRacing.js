@@ -43,9 +43,11 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
     }
-    if (!walletSeed) {
-      setError('Wallet seed not available for payment')
-      return { success: false, error: 'No wallet seed' }
+    // Note: walletSeed may be null for GemWallet connections
+    // Backend needs to handle this case or we need to sign transactions client-side
+    if (!walletSeed && !signAndSubmit) {
+      setError('No signing method available')
+      return { success: false, error: 'No signing method' }
     }
     if (!carId) {
       setError('No car selected')
@@ -56,7 +58,17 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
     try {
       const res = await api.trainCar(carId, walletAddress, walletSeed, attributeIndices)
       // Backend now processes payment internally via blockchain
-      // Server validates 1 XRP and applies hidden deltas
+      // For GemWallet, we may need to sign the transaction client-side
+      if (res?.payment && signAndSubmit && !walletSeed) {
+        // GemWallet path: sign transaction through wallet extension
+        const tx = res.payment.txJSON || {
+          TransactionType: 'Payment',
+          Destination: res.payment.destination,
+          Amount: res.payment.amount,
+        }
+        await signAndSubmit(tx)
+      }
+      
       if (res?.success) {
         setTrainingCount(res.training_count || trainingCount + 1)
         setRaceStatus('idle')
@@ -68,7 +80,7 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
       setError(e.message || 'Training failed')
       return { success: false, error: e.message }
     }
-  }, [walletAddress, walletSeed, trainingCount])
+  }, [walletAddress, walletSeed, signAndSubmit, trainingCount])
 
   const testSpeed = useCallback(async (carId) => {
     if (!walletAddress) {

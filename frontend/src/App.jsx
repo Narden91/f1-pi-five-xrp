@@ -13,6 +13,7 @@ function App() {
     loading,
     txResult,
     transactions,
+    connectionType,
     createWallet,
     sendPayment,
     refreshBalance,
@@ -38,22 +39,29 @@ function App() {
   const handleLogin = async (loginData) => {
     setIsCreatingWallet(true)
     try {
-      if (loginData.type === 'create') {
-        // Create new wallet
-        await createWallet()
+      if (loginData.type === 'gem') {
+        // GemWallet login - use existing wallet with GemWallet address
+        await createWallet({
+          type: 'gemwallet',
+          gemWalletAddress: loginData.address,
+          balance: loginData.balance
+        })
         setCurrentView('dashboard')
-      } else if (loginData.type === 'gem') {
-        // Login with Gem Wallet
-        // For now, create a wallet for demo purposes
-        // In production, you would use the Gem Wallet address to fetch/create wallet data
-        await createWallet()
+      } else if (loginData.type === 'create') {
+        // Create new wallet (existing logic)
+        await createWallet({ type: 'created' })
         setCurrentView('dashboard')
       } else if (loginData.type === 'manual') {
-        // Manual address login
-        // For now, create a wallet for demo purposes
-        await createWallet()
+        // Manual address login - import by seed
+        await createWallet({ 
+          type: 'created',
+          seed: loginData.address // Note: In manual mode, user should provide seed, not address
+        })
         setCurrentView('dashboard')
       }
+    } catch (err) {
+      console.error('Login error:', err)
+      alert('Login failed: ' + err.message)
     } finally {
       setIsCreatingWallet(false)
     }
@@ -128,6 +136,7 @@ function App() {
             txResult={txResult}
             transactions={transactions}
             activeTab={activeTab}
+            connectionType={connectionType}
             onRefreshBalance={refreshBalance}
             onBalanceUpdate={setBalance}
             onSendPayment={sendPayment}
