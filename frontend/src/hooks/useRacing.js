@@ -118,6 +118,10 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
     }
+    if (!walletSeed && !signAndSubmit) {
+      setError('No signing method available')
+      return { success: false, error: 'No signing method' }
+    }
     if (!carId) {
       setError('No car selected')
       return { success: false, error: 'No car selected' }
@@ -125,8 +129,8 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
     setError(null)
     setRaceStatus('racing')
     try {
-      const res = await api.enterRace(carId, walletAddress)
-      if (res?.payment && signAndSubmit) {
+      const res = await api.enterRace(carId, walletAddress, walletSeed)
+      if (res?.payment && signAndSubmit && !walletSeed) {
         const tx = res.payment.txJSON || {
           TransactionType: 'Payment',
           Destination: res.payment.destination,
@@ -154,7 +158,7 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
       setError(e.message || 'Race failed')
       return { success: false, error: e.message }
     }
-  }, [walletAddress, signAndSubmit])
+  }, [walletAddress, walletSeed, signAndSubmit])
 
   return {
     trainingCount,

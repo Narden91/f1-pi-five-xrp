@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useCallback } from 'react'
 import { isInstalled, getAddress, getNetwork } from '@gemwallet/api'
+import api from '../config/api'
 
 export const useGemWallet = () => {
   const [isGemInstalled, setIsGemInstalled] = useState(false)
@@ -46,28 +47,16 @@ export const useGemWallet = () => {
 
   const fetchBalance = useCallback(async (walletAddress) => {
     try {
-      const response = await fetch('https://s.altnet.rippletest.net:51234/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          method: 'account_info',
-          params: [{
-            account: walletAddress,
-            ledger_index: 'validated'
-          }]
-        })
-      })
-
-      const data = await response.json()
+      // Use backend API instead of direct CORS request to XRP Ledger
+      const data = await api.getBalance(walletAddress)
       
-      if (data.result && data.result.account_data) {
-        const balanceInDrops = data.result.account_data.Balance
-        const balanceInXRP = (parseInt(balanceInDrops) / 1000000).toString()
-        return balanceInXRP
+      if (data && data.balance_xrp !== undefined) {
+        return data.balance_xrp.toString()
       }
       
       throw new Error('Failed to fetch balance')
-    } catch {
+    } catch (err) {
+      console.error('Error fetching balance:', err)
       return null
     }
   }, [])

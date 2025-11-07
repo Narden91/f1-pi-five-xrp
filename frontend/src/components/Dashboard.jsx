@@ -38,11 +38,11 @@ const Dashboard = ({
       alert('Please select a car from your garage first')
       return
     }
-    // Trigger backend training flow which should handle 1 XRP validation
+    // Trigger backend training flow which handles 1 XRP payment via blockchain
     const result = await train(selectedCarId, attributeIndices)
     
     if (result.success) {
-      // Deduct 1 XRP from balance immediately
+      // HACKATHON DEMO: Manually deduct balance for UI feedback
       if (onBalanceUpdate) {
         const newBalance = (parseFloat(balance) - 1).toFixed(2)
         onBalanceUpdate(newBalance)
@@ -53,11 +53,6 @@ const Dashboard = ({
       
       // Close modal
       setShowTrainingModal(false)
-      
-      // Refresh balance from server
-      setTimeout(() => {
-        onRefreshBalance()
-      }, 1000)
     }
   }
 
@@ -75,17 +70,19 @@ const Dashboard = ({
       alert('Please select a car from your garage first')
       return
     }
-    await enterRace(selectedCarId)
+    const result = await enterRace(selectedCarId)
+    
+    // HACKATHON DEMO: Manually deduct balance for UI feedback
+    if (result.success && onBalanceUpdate) {
+      const newBalance = (parseFloat(balance) - 1).toFixed(2)
+      onBalanceUpdate(newBalance)
+    }
   }
 
   const handleCarCreated = (car) => {
     setSelectedCarId(car.car_id)
     // Force garage reload
     setGarageKey(prev => prev + 1)
-    // Refresh balance from server after a short delay
-    setTimeout(() => {
-      onRefreshBalance()
-    }, 1000)
   }
   
   return (

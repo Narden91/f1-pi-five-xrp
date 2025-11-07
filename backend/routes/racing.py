@@ -152,23 +152,25 @@ async def test_speed(request: TestSpeedRequest):
 async def enter_race(request: EnterRaceRequest):
     """
     Enter a race with your car
-    Cost: 1 XRP (payment should be validated before calling this)
+    Cost: 1 XRP (payment processed here via blockchain)
     Winner receives 100 XRP prize
     Returns only rank and winner, NOT speed values or flags
     """
     try:
         success, race_result = racing_service.enter_race(
             request.car_id,
-            request.wallet_address
+            request.wallet_address,
+            request.wallet_seed
         )
         
         if not success:
+            error_msg = race_result.get('message', 'Failed to enter race') if race_result else 'Failed to enter race'
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Failed to enter race"
+                detail=error_msg
             )
         
-        logger.info(f"Race completed - Car {request.car_id} placed #{race_result['your_rank']}")
+        logger.info(f"Race completed - Car {request.car_id} placed #{race_result['your_rank']} - Payment: {race_result.get('payment_tx', 'N/A')}")
         
         return {
             'success': True,

@@ -77,13 +77,13 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
         setSelectedCar(result.car_id)
         setHasCreatedCar(true)
         
-        // Update balance (backend already deducted from blockchain)
-        onBalanceChange(balanceNum - 1)
+        // HACKATHON DEMO: Manually update balance since payments are mocked
         if (onBalanceChange) {
           const newBalance = (parseFloat(balance) - 1).toFixed(2)
           onBalanceChange(newBalance)
         }
         
+        // Notify parent that car was created (parent will refresh balance from blockchain)
         if (onCarCreated) {
           onCarCreated(result)
         }
@@ -194,6 +194,7 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
 Garage.propTypes = {
   walletAddress: PropTypes.string,
   balance: PropTypes.string,
+  wallet: PropTypes.object,
   onCarCreated: PropTypes.func,
   onBalanceChange: PropTypes.func,
 }

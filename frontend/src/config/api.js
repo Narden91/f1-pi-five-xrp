@@ -123,9 +123,13 @@ class ApiService {
     return this.post('/race/test', { car_id: carId, wallet_address: walletAddress })
   }
 
-  async enterRace(carId, walletAddress) {
+  async enterRace(carId, walletAddress, walletSeed) {
     // Costs 1 XRP; backend computes secret speed formula and returns abstract ranking info
-    return this.post('/race/enter', { car_id: carId, wallet_address: walletAddress })
+    return this.post('/race/enter', { 
+      car_id: carId, 
+      wallet_address: walletAddress,
+      wallet_seed: walletSeed 
+    })
   }
 
   async getLatestRace(address) {

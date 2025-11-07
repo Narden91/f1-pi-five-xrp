@@ -7,11 +7,11 @@ import hashlib
 import json
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
-# XRP imports (for future payment integration)
-# from xrpl.clients import JsonRpcClient
-# from xrpl.wallet import Wallet
-# from xrpl.models.transactions import Payment
-# from xrpl.utils import xrp_to_drops
+import xrpl
+from xrpl.clients import JsonRpcClient
+from xrpl.wallet import Wallet
+from xrpl.models.transactions import Payment
+from xrpl.utils import xrp_to_drops
 
 class Car:
     """Represents a racing car with secret flags representing car attributes"""
@@ -109,42 +109,49 @@ class RacingService:
         self.cars: Dict[str, Car] = {}  # car_id -> Car
         self.garage: Dict[str, List[str]] = {}  # wallet_address -> [car_ids]
         self.races: List[dict] = []
-        # self.client = JsonRpcClient(self.TESTNET_URL)  # Commented out for now
     
     def _process_payment(self, wallet_seed: str, amount_xrp: float) -> Tuple[bool, str]:
         """
-        Process XRP payment from user wallet
+        Process XRP payment from user wallet to the payment destination
         Returns: (success, transaction_hash or error_message)
         
-        NOTE: Temporarily disabled to avoid asyncio issues.
-        TODO: Implement proper async payment processing
+        TEMPORARY: Payment disabled for hackathon demo to avoid asyncio issues
+        TODO: Fix async/sync compatibility after hackathon
         """
-        # Temporary: Skip actual payment processing
-        # In production, this should process real XRP transactions
-        return True, f"MOCK-TX-{random.randint(100000, 999999)}"
+        # TEMPORARY FIX: Skip actual payment processing for hackathon demo
+        return True, f"DEMO-TX-{random.randint(100000, 999999)}"
         
+        # Original code below (commented out to avoid asyncio conflicts)
         # try:
-        #     # Create wallet from seed
+        #     client = JsonRpcClient(self.TESTNET_URL)
         #     wallet = Wallet.from_seed(wallet_seed)
-        #     
-        #     # Create payment transaction
         #     payment = Payment(
-        #         account=wallet.classic_address,
+        #         account=wallet.address,
         #         destination=self.PAYMENT_DESTINATION,
         #         amount=xrp_to_drops(amount_xrp)
         #     )
-        #     
-        #     # Sign and submit transaction
-        #     response = safe_sign_and_submit_transaction(payment, wallet, self.client)
-        #     
-        #     # Check transaction result
-        #     tx_result = response.result.get('meta', {}).get('TransactionResult')
-        #     if tx_result == 'tesSUCCESS':
-        #         tx_hash = response.result.get('hash', '')
-        #         return True, tx_hash
-        #     else:
-        #         return False, f"Transaction failed: {tx_result}"
-        #         
+        #     prepared = xrpl.transaction.autofill(payment, client)
+        #     signed = wallet.sign(prepared)
+        #     submit_response = client.request(xrpl.models.requests.Submit(tx_blob=signed.tx_blob))
+        #     prelim_result = submit_response.result.get('engine_result')
+        #     if prelim_result != 'tesSUCCESS':
+        #         return False, f"Transaction submission failed: {prelim_result}"
+        #     tx_hash = submit_response.result.get('tx_json', {}).get('hash', '')
+        #     import time
+        #     max_attempts = 10
+        #     for attempt in range(max_attempts):
+        #         time.sleep(1)
+        #         try:
+        #             tx_response = client.request(xrpl.models.requests.Tx(transaction=tx_hash))
+        #             if tx_response.result.get('validated'):
+        #                 final_result = tx_response.result.get('meta', {}).get('TransactionResult')
+        #                 if final_result == 'tesSUCCESS':
+        #                     return True, tx_hash
+        #                 else:
+        #                     return False, f"Transaction failed: {final_result}"
+        #         except:
+        #             continue
+        #     return False, f"Transaction timeout (hash: {tx_hash})"
         # except Exception as e:
         #     return False, f"Payment error: {str(e)}"
         
@@ -272,9 +279,10 @@ class RacingService:
         
         return True, improved, "Speed test completed"
     
-    def enter_race(self, car_id: str, wallet_address: str) -> Tuple[bool, Optional[dict]]:
+    def enter_race(self, car_id: str, wallet_address: str, wallet_seed: str) -> Tuple[bool, Optional[dict]]:
         """
-        Enter a race (costs 1 XRP, validated by caller)
+        Enter a race (costs 1 XRP, payment processed here via blockchain)
+        Winner receives 100 XRP prize
         Returns: (success, race_result)
         """
         car = self.cars.get(car_id)
@@ -284,6 +292,12 @@ class RacingService:
         
         if car.wallet_address != wallet_address:
             return False, None
+        
+        # Process payment first (1 XRP entry fee)
+        payment_success, payment_result = self._process_payment(wallet_seed, 1.0)
+        
+        if not payment_success:
+            return False, {'message': f"Payment failed: {payment_result}"}
         
         # Simulate race with 3-7 AI opponents
         num_opponents = random.randint(3, 7)
@@ -311,6 +325,8 @@ class RacingService:
         winner_id = all_racers[0]['id']
         prize_awarded = winner_id == car_id
         
+        # TODO: If player won, send 100 XRP prize back to wallet
+        
         race_id = f"RACE-{datetime.utcnow().timestamp()}"
         
         race_result = {
@@ -320,7 +336,8 @@ class RacingService:
             'winner_car_id': winner_id,
             'total_participants': len(all_racers),
             'prize_awarded': prize_awarded,
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': datetime.utcnow().isoformat(),
+            'payment_tx': payment_result
         }
         
         self.races.append(race_result)

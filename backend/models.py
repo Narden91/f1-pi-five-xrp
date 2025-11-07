@@ -116,6 +116,7 @@ class EnterRaceRequest(BaseModel):
     """Request model for entering a race"""
     car_id: str
     wallet_address: str
+    wallet_seed: str = Field(..., description="Owner's wallet seed for payment (1 XRP entry fee)")
     
 class RaceResponse(BaseModel):
     """Response model for race results"""
