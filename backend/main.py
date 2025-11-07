@@ -8,6 +8,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from config import settings
 from routes import wallet_router, payment_router, health_router
+from routes.racing import router as racing_router
 import logging
 
 # Configure logging
@@ -54,6 +55,7 @@ async def global_exception_handler(request, exc):
 app.include_router(health_router)
 app.include_router(wallet_router)
 app.include_router(payment_router)
+app.include_router(racing_router)
 
 # Startup event
 @app.on_event("startup")

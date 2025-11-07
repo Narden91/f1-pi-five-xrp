@@ -88,20 +88,33 @@ class ApiService {
 
   // --- Racing Game Endpoints (frontend-only abstraction) ---
   // These assume backend secret logic; frontend must NEVER send or receive raw flags or formulas.
-  async trainCar(address) {
-    // Costs 1 XPF on-chain; backend validates payment & applies ±<20 random deltas per secret flag set
-    return this.post('/race/train', { address })
+  
+  // Garage management
+  async createCar(walletAddress) {
+    // Costs 10 XRP; creates car with 10 hidden flags
+    return this.post('/race/car/create', { wallet_address: walletAddress })
   }
 
-  async testSpeed(address) {
+  async getGarage(walletAddress) {
+    // Get all cars for a wallet (no flags exposed)
+    return this.get(`/race/garage/${walletAddress}`)
+  }
+
+  // Car operations
+  async trainCar(carId, walletAddress) {
+    // Costs 1 XRP on-chain; backend validates payment & applies ±<20 random deltas per secret flag set
+    return this.post('/race/train', { car_id: carId, wallet_address: walletAddress })
+  }
+
+  async testSpeed(carId, walletAddress) {
     // Free test - backend computes speed and returns only qualitative feedback (improved: true/false)
     // Does NOT reveal actual speed value or flags
-    return this.post('/race/test', { address })
+    return this.post('/race/test', { car_id: carId, wallet_address: walletAddress })
   }
 
-  async enterRace(address) {
-    // Costs 1 XPF; backend computes secret speed formula and returns abstract ranking info
-    return this.post('/race/enter', { address })
+  async enterRace(carId, walletAddress) {
+    // Costs 1 XRP; backend computes secret speed formula and returns abstract ranking info
+    return this.post('/race/enter', { car_id: carId, wallet_address: walletAddress })
   }
 
   async getLatestRace(address) {

@@ -57,3 +57,69 @@ class ErrorResponse(BaseModel):
     """Response model for errors"""
     detail: str
     error_type: Optional[str] = None
+
+# Racing Game Models
+class CarCreateRequest(BaseModel):
+    """Request model for creating a new car"""
+    wallet_address: str = Field(..., description="Owner's wallet address")
+    
+    @validator('wallet_address')
+    def validate_wallet_address(cls, v):
+        if not v.startswith('r'):
+            raise ValueError('Invalid XRP address format')
+        return v
+
+class CarResponse(BaseModel):
+    """Response model for car data (no flags exposed)"""
+    car_id: str
+    wallet_address: str
+    training_count: int
+    created_at: str
+    last_trained: Optional[str] = None
+    
+class GarageResponse(BaseModel):
+    """Response model for garage (list of cars)"""
+    wallet_address: str
+    cars: list[CarResponse]
+    total_cars: int
+
+class TrainCarRequest(BaseModel):
+    """Request model for training a car"""
+    car_id: str
+    wallet_address: str
+    
+class TrainCarResponse(BaseModel):
+    """Response model for training result"""
+    success: bool
+    car_id: str
+    training_count: int
+    message: str
+    payment_required: bool = True
+    
+class TestSpeedRequest(BaseModel):
+    """Request model for speed test"""
+    car_id: str
+    wallet_address: str
+    
+class TestSpeedResponse(BaseModel):
+    """Response model for speed test"""
+    success: bool
+    car_id: str
+    improved: bool
+    message: str
+
+class EnterRaceRequest(BaseModel):
+    """Request model for entering a race"""
+    car_id: str
+    wallet_address: str
+    
+class RaceResponse(BaseModel):
+    """Response model for race results"""
+    success: bool
+    race_id: str
+    car_id: str
+    your_rank: int
+    winner_car_id: str
+    total_participants: int
+    prize_awarded: bool
+    message: str

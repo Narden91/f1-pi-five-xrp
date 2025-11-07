@@ -37,10 +37,40 @@ export const useWallet = () => {
       if (seed) {
         // Import wallet from seed
         newWallet = xrpl.Wallet.fromSeed(seed)
+        
+        // Check existing balance
+        try {
+          const response = await client.request({
+            command: 'account_info',
+            account: newWallet.address,
+            ledger_index: 'validated'
+          })
+          setBalance(xrpl.dropsToXrp(response.result.account_data.Balance))
+        } catch (err) {
+          // Account doesn't exist, fund it with 10 XRP
+          await client.fundWallet(newWallet, { amount: '10' })
+          setBalance('10')
+        }
       } else {
-        // Generate new wallet
+        // Generate new wallet and fund with 10 XRP
         newWallet = xrpl.Wallet.generate()
-        await client.fundWallet(newWallet)
+        
+        try {
+          // Fund wallet with exactly 10 XRP
+          const fundResult = await client.fundWallet(newWallet, { amount: '10' })
+          console.log('Wallet funded:', fundResult)
+          setBalance('10')
+        } catch (fundError) {
+          console.error('Funding error:', fundError)
+          // Fallback: use default faucet funding
+          await client.fundWallet(newWallet)
+          const response = await client.request({
+            command: 'account_info',
+            account: newWallet.address,
+            ledger_index: 'validated'
+          })
+          setBalance(xrpl.dropsToXrp(response.result.account_data.Balance))
+        }
       }
 
       setWallet({
@@ -48,13 +78,6 @@ export const useWallet = () => {
         seed: newWallet.seed
       })
 
-      const response = await client.request({
-        command: 'account_info',
-        account: newWallet.address,
-        ledger_index: 'validated'
-      })
-
-      setBalance(xrpl.dropsToXrp(response.result.account_data.Balance))
       await client.disconnect()
     } catch (error) {
       console.error('Error:', error)

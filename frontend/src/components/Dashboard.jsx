@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
+import { useState } from 'react'
 import WalletCard from './WalletCard'
 import ActionsPanel from './ActionsPanel'
 import TransactionHistory from './TransactionHistory'
+import Garage from './Garage'
 import CarStatus from './CarStatus'
 import RaceControls from './RaceControls'
 import RaceResults from './RaceResults'
@@ -19,20 +21,38 @@ const Dashboard = ({
   onResetWallet,
   signer,
 }) => {
+  const [selectedCarId, setSelectedCarId] = useState(null)
   const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, signer)
 
   const handleTrain = async () => {
-    // Trigger backend training flow which should handle 1 XPF validation
-    await train()
+    if (!selectedCarId) {
+      alert('Please select a car from your garage first')
+      return
+    }
+    // Trigger backend training flow which should handle 1 XRP validation
+    await train(selectedCarId)
   }
 
   const handleTestSpeed = async () => {
+    if (!selectedCarId) {
+      alert('Please select a car from your garage first')
+      return
+    }
     // Test speed - no payment, just qualitative feedback
-    await testSpeed()
+    await testSpeed(selectedCarId)
   }
 
   const handleRace = async () => {
-    await enterRace()
+    if (!selectedCarId) {
+      alert('Please select a car from your garage first')
+      return
+    }
+    await enterRace(selectedCarId)
+  }
+
+  const handleCarCreated = (car) => {
+    setSelectedCarId(car.car_id)
+    onRefreshBalance()
   }
   
   return (
@@ -51,13 +71,20 @@ const Dashboard = ({
         onRefresh={onRefreshBalance}
       />
 
+      {/* Garage Section */}
+      <Garage 
+        walletAddress={wallet?.address}
+        balance={balance}
+        onCarCreated={handleCarCreated}
+      />
+
       {/* Racing Game Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <CarStatus 
             trainingCount={trainingCount} 
             raceStatus={raceStatus}
-            carId={carId}
+            carId={selectedCarId || carId}
             lastSpeedTest={lastSpeedTest}
           />
         </div>
@@ -66,7 +93,7 @@ const Dashboard = ({
             onTrain={handleTrain}
             onTestSpeed={handleTestSpeed}
             onRace={handleRace} 
-            disabled={!wallet} 
+            disabled={!wallet || !selectedCarId} 
             loading={loading || raceStatus === 'training' || raceStatus === 'racing'} 
           />
         </div>

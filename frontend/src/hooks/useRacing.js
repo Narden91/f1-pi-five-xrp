@@ -38,16 +38,20 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     }
   }, [walletAddress])
 
-  const train = useCallback(async () => {
+  const train = useCallback(async (carId) => {
     if (!walletAddress) {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
     }
+    if (!carId) {
+      setError('No car selected')
+      return { success: false, error: 'No car selected' }
+    }
     setError(null)
     setRaceStatus('training')
     try {
-      const res = await api.trainCar(walletAddress)
-      // If backend requires client-side signing of XPF payment, handle it
+      const res = await api.trainCar(carId, walletAddress)
+      // If backend requires client-side signing of XRP payment, handle it
       if (res?.payment && signAndSubmit) {
         const tx = res.payment.txJSON || {
           TransactionType: 'Payment',
@@ -56,9 +60,9 @@ export const useRacing = (walletAddress, signAndSubmit) => {
         }
         await signAndSubmit(tx)
       }
-      // Server validates 1 XPF and applies hidden deltas
+      // Server validates 1 XRP and applies hidden deltas
       if (res?.success) {
-        setTrainingCount((c) => c + 1)
+        setTrainingCount(res.training_count || trainingCount + 1)
         setRaceStatus('idle')
         return { success: true }
       }
@@ -68,18 +72,22 @@ export const useRacing = (walletAddress, signAndSubmit) => {
       setError(e.message || 'Training failed')
       return { success: false, error: e.message }
     }
-  }, [walletAddress, signAndSubmit])
+  }, [walletAddress, signAndSubmit, trainingCount])
 
-  const testSpeed = useCallback(async () => {
+  const testSpeed = useCallback(async (carId) => {
     if (!walletAddress) {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
+    }
+    if (!carId) {
+      setError('No car selected')
+      return { success: false, error: 'No car selected' }
     }
     setError(null)
     setRaceStatus('testing')
     try {
       // Call backend to test speed - returns only qualitative feedback
-      const res = await api.testSpeed(walletAddress)
+      const res = await api.testSpeed(carId, walletAddress)
       if (res?.success) {
         // Backend returns { improved: true/false }
         setLastSpeedTest({
@@ -97,15 +105,19 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     }
   }, [walletAddress])
 
-  const enterRace = useCallback(async () => {
+  const enterRace = useCallback(async (carId) => {
     if (!walletAddress) {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
     }
+    if (!carId) {
+      setError('No car selected')
+      return { success: false, error: 'No car selected' }
+    }
     setError(null)
     setRaceStatus('racing')
     try {
-      const res = await api.enterRace(walletAddress)
+      const res = await api.enterRace(carId, walletAddress)
       if (res?.payment && signAndSubmit) {
         const tx = res.payment.txJSON || {
           TransactionType: 'Payment',
@@ -114,11 +126,19 @@ export const useRacing = (walletAddress, signAndSubmit) => {
         }
         await signAndSubmit(tx)
       }
-      if (res?.success && res?.race) {
-        // race: { id, time, participants, winner, yourRank, prizeAwarded }
-        setLastRace(res.race)
+      if (res?.success) {
+        // race: { race_id, car_id, your_rank, winner_car_id, total_participants, prize_awarded }
+        const raceData = {
+          id: res.race_id,
+          winner: res.winner_car_id,
+          winnerCarId: res.winner_car_id,
+          yourRank: res.your_rank,
+          participants: res.total_participants,
+          prizeAwarded: res.prize_awarded
+        }
+        setLastRace(raceData)
         setRaceStatus('complete')
-        return { success: true, race: res.race }
+        return { success: true, race: raceData }
       }
       throw new Error(res?.message || 'Race failed')
     } catch (e) {
