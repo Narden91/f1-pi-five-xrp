@@ -3,8 +3,8 @@ import { formatAddress } from '../utils'
 
 const TransactionHistory = ({ transactions }) => {
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-pink-100">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6">Transaction History</h2>
+    <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-orange-100">
+      <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6">Transaction History</h2>
       {transactions.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📊</div>
@@ -14,7 +14,7 @@ const TransactionHistory = ({ transactions }) => {
       ) : (
         <div className="space-y-4">
           {transactions.map((tx) => (
-            <div key={tx.id} className="border border-pink-200 rounded-lg p-4 hover:bg-pink-50/50 transition-colors">
+            <div key={tx.id} className="border border-orange-200 rounded-lg p-4 hover:bg-orange-50/50 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${

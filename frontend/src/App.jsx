@@ -119,7 +119,7 @@ function App() {
 
       {/* Dashboard */}
       {currentView === 'dashboard' && wallet && (
-        <main className="w-full px-8 py-8 bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 min-h-screen">
+        <main className="w-full px-8 py-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 min-h-screen">
           <Dashboard
             wallet={wallet}
             balance={balance}

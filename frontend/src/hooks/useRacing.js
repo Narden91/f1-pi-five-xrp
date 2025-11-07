@@ -12,8 +12,17 @@ export const useRacing = (walletAddress, signAndSubmit) => {
   const [lastRace, setLastRace] = useState(null)
   const [raceStatus, setRaceStatus] = useState('idle') // idle | training | queued | racing | complete | error
   const [error, setError] = useState(null)
+  const [lastSpeedTest, setLastSpeedTest] = useState(null) // { improved: boolean }
+  const [carId, setCarId] = useState(null)
 
   const canRace = useMemo(() => raceStatus === 'idle' || raceStatus === 'complete', [raceStatus])
+
+  // Generate or retrieve car ID based on wallet address
+  useMemo(() => {
+    if (walletAddress) {
+      setCarId(`CAR-${walletAddress.slice(0, 6).toLowerCase()}`)
+    }
+  }, [walletAddress])
 
   const refreshLatestRace = useCallback(async () => {
     if (!walletAddress) return
@@ -61,6 +70,33 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     }
   }, [walletAddress, signAndSubmit])
 
+  const testSpeed = useCallback(async () => {
+    if (!walletAddress) {
+      setError('Connect a wallet first')
+      return { success: false, error: 'No wallet' }
+    }
+    setError(null)
+    setRaceStatus('testing')
+    try {
+      // Call backend to test speed - returns only qualitative feedback
+      const res = await api.testSpeed(walletAddress)
+      if (res?.success) {
+        // Backend returns { improved: true/false }
+        setLastSpeedTest({
+          improved: res.improved || false,
+          timestamp: new Date().toISOString()
+        })
+        setRaceStatus('idle')
+        return { success: true, improved: res.improved }
+      }
+      throw new Error(res?.message || 'Speed test failed')
+    } catch (e) {
+      setRaceStatus('error')
+      setError(e.message || 'Speed test failed')
+      return { success: false, error: e.message }
+    }
+  }, [walletAddress])
+
   const enterRace = useCallback(async () => {
     if (!walletAddress) {
       setError('Connect a wallet first')
@@ -98,7 +134,10 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     raceStatus,
     error,
     canRace,
+    lastSpeedTest,
+    carId,
     train,
+    testSpeed,
     enterRace,
     refreshLatestRace,
   }

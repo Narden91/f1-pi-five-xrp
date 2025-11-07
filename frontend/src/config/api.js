@@ -93,6 +93,12 @@ class ApiService {
     return this.post('/race/train', { address })
   }
 
+  async testSpeed(address) {
+    // Free test - backend computes speed and returns only qualitative feedback (improved: true/false)
+    // Does NOT reveal actual speed value or flags
+    return this.post('/race/test', { address })
+  }
+
   async enterRace(address) {
     // Costs 1 XPF; backend computes secret speed formula and returns abstract ranking info
     return this.post('/race/enter', { address })

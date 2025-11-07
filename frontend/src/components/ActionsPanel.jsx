@@ -15,8 +15,8 @@ const ActionsPanel = ({ onSendPayment, onResetWallet, loading, txResult }) => {
   }
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-pink-100 hover:shadow-2xl transition-all duration-300">
-      <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6 flex items-center space-x-3">
+    <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-orange-100 hover:shadow-2xl transition-all duration-300">
+      <h2 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-6 flex items-center space-x-3">
         <span>⚡</span>
         <span>Quick Actions</span>
       </h2>
