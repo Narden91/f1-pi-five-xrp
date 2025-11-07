@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import WalletCard from './WalletCard'
 import TransactionHistory from './TransactionHistory'
 import Garage from './Garage'
@@ -22,7 +22,7 @@ const Dashboard = ({
   const [selectedCarId, setSelectedCarId] = useState(null)
   const [showTrainingModal, setShowTrainingModal] = useState(false)
   const [garageKey, setGarageKey] = useState(0) // Key to force garage reload
-  const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, signer)
+  const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, wallet?.seed, signer)
 
   const handleTrainClick = () => {
     if (!selectedCarId) {
@@ -108,6 +108,7 @@ const Dashboard = ({
         key={garageKey}
         walletAddress={wallet?.address}
         balance={balance}
+        wallet={wallet}
         onCarCreated={handleCarCreated}
         onBalanceChange={onBalanceUpdate}
       />

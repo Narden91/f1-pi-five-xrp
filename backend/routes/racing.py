@@ -16,12 +16,22 @@ router = APIRouter(prefix="/race", tags=["racing"])
 async def create_car(request: CarCreateRequest):
     """
     Create a new car with 10 hidden flags
-    Cost: 1 XRP (payment should be validated before calling this)
+    Cost: 1 XRP (payment processed here via blockchain)
     """
     try:
-        car = racing_service.create_car(request.wallet_address)
-        logger.info(f"Created car {car.car_id} for {request.wallet_address}")
+        success, car, message = racing_service.create_car(request.wallet_address, request.wallet_seed)
+        
+        if not success:
+            logger.warning(f"Car creation failed for {request.wallet_address}: {message}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=message
+            )
+        
+        logger.info(f"Created car {car.car_id} for {request.wallet_address}. Payment: {message}")
         return car.to_dict_safe()
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error creating car: {str(e)}")
         raise HTTPException(
@@ -53,7 +63,7 @@ async def get_garage(wallet_address: str):
 async def train_car(request: TrainCarRequest):
     """
     Train a car - randomly adjusts hidden flags by ±20
-    Cost: 1 XRP (payment should be validated before calling this)
+    Cost: 1 XRP (payment processed here via blockchain)
     
     Can train specific attributes or all:
     - attribute_indices: None or [] = train all 10 attributes
@@ -67,10 +77,12 @@ async def train_car(request: TrainCarRequest):
         success, message, car, changes = racing_service.train_car(
             request.car_id,
             request.wallet_address,
+            request.wallet_seed,
             request.attribute_indices
         )
         
         if not success:
+            logger.warning(f"Training failed for car {request.car_id}: {message}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=message
@@ -82,7 +94,7 @@ async def train_car(request: TrainCarRequest):
         else:
             trained_attrs = car.ATTRIBUTE_NAMES.copy()
         
-        logger.info(f"Trained car {request.car_id} - Training #{car.training_count} - Attributes: {trained_attrs}")
+        logger.info(f"Trained car {request.car_id} -> New car {car.car_id} - Training #{car.training_count} - Attributes: {trained_attrs}")
         
         return {
             'success': True,

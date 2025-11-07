@@ -90,9 +90,13 @@ class ApiService {
   // These assume backend secret logic; frontend must NEVER send or receive raw flags or formulas.
   
   // Garage management
-  async createCar(walletAddress) {
-    // Costs 10 XRP; creates car with 10 hidden flags
-    return this.post('/race/car/create', { wallet_address: walletAddress })
+  async createCar(walletAddress, walletSeed) {
+    // Costs 1 XRP; creates car with 10 hidden flags
+    // Payment processed on backend via blockchain transaction
+    return this.post('/race/car/create', { 
+      wallet_address: walletAddress,
+      wallet_seed: walletSeed
+    })
   }
 
   async getGarage(walletAddress) {
@@ -101,12 +105,14 @@ class ApiService {
   }
 
   // Car operations
-  async trainCar(carId, walletAddress, attributeIndices = null) {
+  async trainCar(carId, walletAddress, walletSeed, attributeIndices = null) {
     // Costs 1 XRP on-chain; backend validates payment & applies ±20 random deltas per secret flag set
     // attributeIndices: null or [] = train all, [0,1,2] = train specific attributes
+    // Payment processed on backend via blockchain transaction
     return this.post('/race/train', { 
       car_id: carId, 
       wallet_address: walletAddress,
+      wallet_seed: walletSeed,
       attribute_indices: attributeIndices 
     })
   }

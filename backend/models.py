@@ -62,6 +62,7 @@ class ErrorResponse(BaseModel):
 class CarCreateRequest(BaseModel):
     """Request model for creating a new car"""
     wallet_address: str = Field(..., description="Owner's wallet address")
+    wallet_seed: str = Field(..., description="Owner's wallet seed for payment")
     
     @validator('wallet_address')
     def validate_wallet_address(cls, v):
@@ -87,6 +88,7 @@ class TrainCarRequest(BaseModel):
     """Request model for training a car"""
     car_id: str
     wallet_address: str
+    wallet_seed: str = Field(..., description="Owner's wallet seed for payment")
     attribute_indices: Optional[list[int]] = None  # None or empty = train all, otherwise train specific indices (0-9)
     
 class TrainCarResponse(BaseModel):

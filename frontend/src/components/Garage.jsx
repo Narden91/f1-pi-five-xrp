@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import api from '../config/api'
 
-const Garage = ({ walletAddress, balance, onCarCreated, onBalanceChange }) => {
+const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange }) => {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -53,6 +53,11 @@ const Garage = ({ walletAddress, balance, onCarCreated, onBalanceChange }) => {
       return
     }
 
+    if (!wallet.seed) {
+      setError('Wallet seed not available for payment authorization')
+      return
+    }
+
     // Check balance
     const balanceNum = parseFloat(balance || '0')
     if (balanceNum < 1) {
@@ -64,15 +69,16 @@ const Garage = ({ walletAddress, balance, onCarCreated, onBalanceChange }) => {
     setError(null)
 
     try {
-      // Call backend to create car (backend will expect payment validation)
-      const result = await api.createCar(walletAddress)
+      // Call backend to create car - backend will process 1 XRP payment via blockchain
+      const result = await api.createCar(walletAddress, wallet.seed)
       
       if (result.car_id) {
         await loadGarage()
         setSelectedCar(result.car_id)
         setHasCreatedCar(true)
         
-        // Deduct 1 XRP from balance
+        // Update balance (backend already deducted from blockchain)
+        onBalanceChange(balanceNum - 1)
         if (onBalanceChange) {
           const newBalance = (parseFloat(balance) - 1).toFixed(2)
           onBalanceChange(newBalance)

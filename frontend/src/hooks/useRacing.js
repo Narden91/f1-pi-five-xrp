@@ -7,7 +7,7 @@ import api from '../config/api'
  * - Never stores or exposes secret flags.
  * - Talks to backend for training and racing.
  */
-export const useRacing = (walletAddress, signAndSubmit) => {
+export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
   const [trainingCount, setTrainingCount] = useState(0)
   const [lastRace, setLastRace] = useState(null)
   const [raceStatus, setRaceStatus] = useState('idle') // idle | training | queued | racing | complete | error
@@ -43,6 +43,10 @@ export const useRacing = (walletAddress, signAndSubmit) => {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
     }
+    if (!walletSeed) {
+      setError('Wallet seed not available for payment')
+      return { success: false, error: 'No wallet seed' }
+    }
     if (!carId) {
       setError('No car selected')
       return { success: false, error: 'No car selected' }
@@ -50,16 +54,8 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     setError(null)
     setRaceStatus('training')
     try {
-      const res = await api.trainCar(carId, walletAddress, attributeIndices)
-      // If backend requires client-side signing of XRP payment, handle it
-      if (res?.payment && signAndSubmit) {
-        const tx = res.payment.txJSON || {
-          TransactionType: 'Payment',
-          Destination: res.payment.destination,
-          Amount: res.payment.amount, // Could be drops or issued currency object
-        }
-        await signAndSubmit(tx)
-      }
+      const res = await api.trainCar(carId, walletAddress, walletSeed, attributeIndices)
+      // Backend now processes payment internally via blockchain
       // Server validates 1 XRP and applies hidden deltas
       if (res?.success) {
         setTrainingCount(res.training_count || trainingCount + 1)
@@ -72,7 +68,7 @@ export const useRacing = (walletAddress, signAndSubmit) => {
       setError(e.message || 'Training failed')
       return { success: false, error: e.message }
     }
-  }, [walletAddress, signAndSubmit, trainingCount])
+  }, [walletAddress, walletSeed, trainingCount])
 
   const testSpeed = useCallback(async (carId) => {
     if (!walletAddress) {

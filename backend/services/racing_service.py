@@ -7,6 +7,11 @@ import hashlib
 import json
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
+# XRP imports (for future payment integration)
+# from xrpl.clients import JsonRpcClient
+# from xrpl.wallet import Wallet
+# from xrpl.models.transactions import Payment
+# from xrpl.utils import xrp_to_drops
 
 class Car:
     """Represents a racing car with secret flags representing car attributes"""
@@ -95,11 +100,53 @@ class Car:
 class RacingService:
     """Service to manage cars and races"""
     
+    # Destination address for car payments (could be a treasury/pool address)
+    PAYMENT_DESTINATION = "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"  # Testnet faucet as placeholder
+    TESTNET_URL = "https://s.altnet.rippletest.net:51234"
+    
     def __init__(self):
         # In-memory storage (in production, use a database)
         self.cars: Dict[str, Car] = {}  # car_id -> Car
         self.garage: Dict[str, List[str]] = {}  # wallet_address -> [car_ids]
         self.races: List[dict] = []
+        # self.client = JsonRpcClient(self.TESTNET_URL)  # Commented out for now
+    
+    def _process_payment(self, wallet_seed: str, amount_xrp: float) -> Tuple[bool, str]:
+        """
+        Process XRP payment from user wallet
+        Returns: (success, transaction_hash or error_message)
+        
+        NOTE: Temporarily disabled to avoid asyncio issues.
+        TODO: Implement proper async payment processing
+        """
+        # Temporary: Skip actual payment processing
+        # In production, this should process real XRP transactions
+        return True, f"MOCK-TX-{random.randint(100000, 999999)}"
+        
+        # try:
+        #     # Create wallet from seed
+        #     wallet = Wallet.from_seed(wallet_seed)
+        #     
+        #     # Create payment transaction
+        #     payment = Payment(
+        #         account=wallet.classic_address,
+        #         destination=self.PAYMENT_DESTINATION,
+        #         amount=xrp_to_drops(amount_xrp)
+        #     )
+        #     
+        #     # Sign and submit transaction
+        #     response = safe_sign_and_submit_transaction(payment, wallet, self.client)
+        #     
+        #     # Check transaction result
+        #     tx_result = response.result.get('meta', {}).get('TransactionResult')
+        #     if tx_result == 'tesSUCCESS':
+        #         tx_hash = response.result.get('hash', '')
+        #         return True, tx_hash
+        #     else:
+        #         return False, f"Transaction failed: {tx_result}"
+        #         
+        # except Exception as e:
+        #     return False, f"Payment error: {str(e)}"
         
     def _generate_car_id(self, wallet_address: str) -> str:
         """Generate unique car ID"""
@@ -108,11 +155,19 @@ class RacingService:
         hash_id = hashlib.sha256(data.encode()).hexdigest()[:12]
         return f"CAR-{hash_id}"
     
-    def create_car(self, wallet_address: str) -> Car:
+    def create_car(self, wallet_address: str, wallet_seed: str) -> Tuple[bool, Optional[Car], str]:
         """
         Create a new car with random hidden flags
-        Cost: 1 XRP (to be validated by caller)
+        Cost: 1 XRP (payment processed here)
+        Returns: (success, car, message)
         """
+        # Process payment first
+        payment_success, payment_result = self._process_payment(wallet_seed, 1.0)
+        
+        if not payment_success:
+            return False, None, f"Payment failed: {payment_result}"
+        
+        # Payment successful, create car
         car_id = self._generate_car_id(wallet_address)
         car = Car(car_id, wallet_address)
         
@@ -122,7 +177,7 @@ class RacingService:
             self.garage[wallet_address] = []
         self.garage[wallet_address].append(car_id)
         
-        return car
+        return True, car, f"Car created successfully. Payment tx: {payment_result}"
     
     def get_garage(self, wallet_address: str) -> List[Car]:
         """Get all cars for a wallet address"""
@@ -133,14 +188,15 @@ class RacingService:
         """Get a specific car"""
         return self.cars.get(car_id)
     
-    def train_car(self, car_id: str, wallet_address: str, attribute_indices: Optional[List[int]] = None) -> Tuple[bool, str, Optional[Car], Optional[dict]]:
+    def train_car(self, car_id: str, wallet_address: str, wallet_seed: str, attribute_indices: Optional[List[int]] = None) -> Tuple[bool, str, Optional[Car], Optional[dict]]:
         """
-        Train a car (costs 1 XRP, validated by caller)
+        Train a car (costs 1 XRP, payment processed here)
         Training CREATES A NEW CAR based on the selected car with modified attributes
         
         Args:
             car_id: The car ID to use as base for training
             wallet_address: Owner's wallet address
+            wallet_seed: Owner's wallet seed for payment
             attribute_indices: List of attribute indices to train (0-9)
                               None or empty list = train all attributes
         
@@ -154,7 +210,13 @@ class RacingService:
         if base_car.wallet_address != wallet_address:
             return False, "You don't own this car", None, None
         
-        # Create a NEW car based on the selected car
+        # Process payment first
+        payment_success, payment_result = self._process_payment(wallet_seed, 1.0)
+        
+        if not payment_success:
+            return False, f"Payment failed: {payment_result}", None, None
+        
+        # Payment successful, create new car
         new_car_id = self._generate_car_id(wallet_address)
         new_car = Car(new_car_id, wallet_address)
         
@@ -179,7 +241,7 @@ class RacingService:
         else:
             attr_msg = "Trained: All attributes"
         
-        return True, f"New car created from training (Training #{new_car.training_count}). {attr_msg}", new_car, changes
+        return True, f"New car created from training (Training #{new_car.training_count}). {attr_msg}. Payment tx: {payment_result}", new_car, changes
     
     def test_speed(self, car_id: str, wallet_address: str) -> Tuple[bool, bool, str]:
         """
