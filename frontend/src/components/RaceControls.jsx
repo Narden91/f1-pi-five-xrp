@@ -14,9 +14,9 @@ const RaceControls = ({ onTrain, onTestSpeed, onRace, disabled, loading }) => {
       <div className="grid grid-cols-1 gap-3">
         <ActionButton onClick={onTrain} disabled={disabled || loading} loading={loading} variant="primary">
           <div className="text-center">
-            <div className="text-2xl mb-1">�</div>
+            <div className="text-2xl mb-1">🔁</div>
             <div className="font-semibold">Train Car</div>
-            <div className="text-[10px] mt-1 opacity-80">Costs 1 XPF • Random ±20 adjustments</div>
+            <div className="text-[10px] mt-1 opacity-80">1 XRP • Creates new car variant</div>
           </div>
         </ActionButton>
         

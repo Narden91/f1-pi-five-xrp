@@ -136,39 +136,50 @@ class RacingService:
     def train_car(self, car_id: str, wallet_address: str, attribute_indices: Optional[List[int]] = None) -> Tuple[bool, str, Optional[Car], Optional[dict]]:
         """
         Train a car (costs 1 XRP, validated by caller)
+        Training CREATES A NEW CAR based on the selected car with modified attributes
         
         Args:
-            car_id: The car ID to train
+            car_id: The car ID to use as base for training
             wallet_address: Owner's wallet address
             attribute_indices: List of attribute indices to train (0-9)
                               None or empty list = train all attributes
         
-        Returns: (success, message, car, changes_info)
+        Returns: (success, message, new_car, changes_info)
         """
-        car = self.cars.get(car_id)
+        base_car = self.cars.get(car_id)
         
-        if not car:
+        if not base_car:
             return False, "Car not found", None, None
         
-        if car.wallet_address != wallet_address:
+        if base_car.wallet_address != wallet_address:
             return False, "You don't own this car", None, None
         
-        # Store previous speed for comparison
-        old_speed = car.calculate_speed() if car.last_speed is None else car.last_speed
+        # Create a NEW car based on the selected car
+        new_car_id = self._generate_car_id(wallet_address)
+        new_car = Car(new_car_id, wallet_address)
         
-        # Apply training to specified attributes
-        changes = car.train(attribute_indices)
+        # Copy flags from base car
+        new_car.flags = base_car.flags.copy()
+        new_car.training_count = base_car.training_count  # Inherit training count
         
-        new_speed = car.calculate_speed()
+        # Apply training to specified attributes of the NEW car
+        changes = new_car.train(attribute_indices)
+        
+        # Store the new car
+        self.cars[new_car_id] = new_car
+        
+        if wallet_address not in self.garage:
+            self.garage[wallet_address] = []
+        self.garage[wallet_address].append(new_car_id)
         
         # Prepare info about what was trained (attribute names only, not values)
         if attribute_indices:
-            trained_attrs = [car.ATTRIBUTE_NAMES[i] for i in attribute_indices if 0 <= i < 10]
+            trained_attrs = [new_car.ATTRIBUTE_NAMES[i] for i in attribute_indices if 0 <= i < 10]
             attr_msg = f"Trained: {', '.join(trained_attrs)}"
         else:
             attr_msg = "Trained: All attributes"
         
-        return True, f"Car trained successfully (Training #{car.training_count}). {attr_msg}", car, changes
+        return True, f"New car created from training (Training #{new_car.training_count}). {attr_msg}", new_car, changes
     
     def test_speed(self, car_id: str, wallet_address: str) -> Tuple[bool, bool, str]:
         """

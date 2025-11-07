@@ -65,7 +65,7 @@ const TrainingModal = ({ isOpen, onClose, onTrain, loading }) => {
           <div className="mb-6 p-4 bg-yellow-100 border-2 border-yellow-300 rounded-xl">
             <p className="text-sm text-yellow-800">
               💡 <strong>Training Cost:</strong> 1 XRP per session<br/>
-              Each attribute will be randomly adjusted by ±20 points (range: 1-999)
+              Training will <strong>create a NEW car</strong> based on the selected one with modified attributes (±20 points per attribute, range: 1-999)
             </p>
           </div>
 
@@ -84,7 +84,7 @@ const TrainingModal = ({ isOpen, onClose, onTrain, loading }) => {
                 <div className="text-left">
                   <div className="font-bold text-lg">Train All Attributes</div>
                   <div className={`text-sm ${trainAll ? 'text-orange-100' : 'text-gray-600'}`}>
-                    Improve all 10 car attributes at once
+                    Creates new car with all 10 attributes improved
                   </div>
                 </div>
               </div>
@@ -158,10 +158,10 @@ const TrainingModal = ({ isOpen, onClose, onTrain, loading }) => {
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Training...
+                  Creating New Car...
                 </div>
               ) : (
-                <>🚀 Train (1 XRP)</>
+                <>🚀 Create New Car (1 XRP)</>
               )}
             </button>
           </div>

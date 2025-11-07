@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import WalletCard from './WalletCard'
 import TransactionHistory from './TransactionHistory'
 import Garage from './Garage'
@@ -16,10 +16,12 @@ const Dashboard = ({
   transactions,
   activeTab,
   onRefreshBalance,
+  onBalanceUpdate,
   signer,
 }) => {
   const [selectedCarId, setSelectedCarId] = useState(null)
   const [showTrainingModal, setShowTrainingModal] = useState(false)
+  const [garageKey, setGarageKey] = useState(0) // Key to force garage reload
   const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, signer)
 
   const handleTrainClick = () => {
@@ -36,9 +38,26 @@ const Dashboard = ({
       return
     }
     // Trigger backend training flow which should handle 1 XRP validation
-    await train(selectedCarId, attributeIndices)
-    setShowTrainingModal(false)
-    onRefreshBalance() // Refresh balance after training
+    const result = await train(selectedCarId, attributeIndices)
+    
+    if (result.success) {
+      // Deduct 1 XRP from balance immediately
+      if (onBalanceUpdate) {
+        const newBalance = (parseFloat(balance) - 1).toFixed(2)
+        onBalanceUpdate(newBalance)
+      }
+      
+      // Force garage to reload to show new car
+      setGarageKey(prev => prev + 1)
+      
+      // Close modal
+      setShowTrainingModal(false)
+      
+      // Refresh balance from server
+      setTimeout(() => {
+        onRefreshBalance()
+      }, 1000)
+    }
   }
 
   const handleTestSpeed = async () => {
@@ -60,7 +79,12 @@ const Dashboard = ({
 
   const handleCarCreated = (car) => {
     setSelectedCarId(car.car_id)
-    onRefreshBalance()
+    // Force garage reload
+    setGarageKey(prev => prev + 1)
+    // Refresh balance from server after a short delay
+    setTimeout(() => {
+      onRefreshBalance()
+    }, 1000)
   }
   
   return (
@@ -81,9 +105,11 @@ const Dashboard = ({
 
       {/* Garage Section */}
       <Garage 
+        key={garageKey}
         walletAddress={wallet?.address}
         balance={balance}
         onCarCreated={handleCarCreated}
+        onBalanceChange={onBalanceUpdate}
       />
 
       {/* Racing Game Panel */}
@@ -146,6 +172,7 @@ Dashboard.propTypes = {
   transactions: PropTypes.array.isRequired,
   activeTab: PropTypes.string.isRequired,
   onRefreshBalance: PropTypes.func.isRequired,
+  onBalanceUpdate: PropTypes.func,
   signer: PropTypes.func,
 }
 

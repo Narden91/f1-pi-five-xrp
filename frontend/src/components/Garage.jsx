@@ -2,11 +2,12 @@ import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import api from '../config/api'
 
-const Garage = ({ walletAddress, balance, onCarCreated }) => {
+const Garage = ({ walletAddress, balance, onCarCreated, onBalanceChange }) => {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [selectedCar, setSelectedCar] = useState(null)
+  const [hasCreatedCar, setHasCreatedCar] = useState(false)
 
   useEffect(() => {
     const loadGarage = async () => {
@@ -15,6 +16,11 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
       try {
         const data = await api.getGarage(walletAddress)
         setCars(data.cars || [])
+        
+        // Check if user has created a car
+        if (data.cars?.length > 0) {
+          setHasCreatedCar(true)
+        }
         
         // Auto-select first car if none selected
         if (data.cars?.length > 0 && !selectedCar) {
@@ -64,6 +70,13 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
       if (result.car_id) {
         await loadGarage()
         setSelectedCar(result.car_id)
+        setHasCreatedCar(true)
+        
+        // Deduct 1 XRP from balance
+        if (onBalanceChange) {
+          const newBalance = (parseFloat(balance) - 1).toFixed(2)
+          onBalanceChange(newBalance)
+        }
         
         if (onCarCreated) {
           onCarCreated(result)
@@ -85,7 +98,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
         </h2>
         <button
           onClick={handleCreateCar}
-          disabled={loading || parseFloat(balance || '0') < 1}
+          disabled={loading || parseFloat(balance || '0') < 1 || hasCreatedCar}
           className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           {loading ? (
@@ -93,6 +106,8 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               Creating...
             </div>
+          ) : hasCreatedCar ? (
+            <>✓ Car Created</>
           ) : (
             <>➕ Create New Car (1 XRP)</>
           )}
@@ -113,7 +128,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
             Create your first car to start racing! Each car has 10 hidden performance flags.
           </p>
           <p className="text-xs text-orange-600 italic">
-            Cost: 1 XRP per car
+            Cost: 1 XRP • You can create ONE initial car, then train it to generate variants
           </p>
         </div>
       ) : (
@@ -162,7 +177,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
       {cars.length > 0 && (
         <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
           <p className="text-sm text-yellow-800 italic">
-            💡 Each car has 10 hidden performance flags that affect its speed. Train your car to improve these flags randomly (±20 points each training session).
+            💡 Each car has 10 hidden performance flags that affect its speed. Train your selected car to create a new variant with improved attributes (±20 points per training session). Training costs 1 XRP.
           </p>
         </div>
       )}
@@ -174,6 +189,7 @@ Garage.propTypes = {
   walletAddress: PropTypes.string,
   balance: PropTypes.string,
   onCarCreated: PropTypes.func,
+  onBalanceChange: PropTypes.func,
 }
 
 export default Garage

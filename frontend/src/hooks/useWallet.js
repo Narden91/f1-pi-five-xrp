@@ -183,5 +183,6 @@ export const useWallet = () => {
     refreshBalance,
     resetWallet,
     signAndSubmit,
+    setBalance,
   }
 }

@@ -18,6 +18,7 @@ function App() {
     refreshBalance,
     resetWallet,
     signAndSubmit,
+    setBalance,
   } = useWallet()
 
   const handleGetStarted = async () => {
@@ -128,6 +129,7 @@ function App() {
             transactions={transactions}
             activeTab={activeTab}
             onRefreshBalance={refreshBalance}
+            onBalanceUpdate={setBalance}
             onSendPayment={sendPayment}
             onResetWallet={handleResetWallet}
             signer={signAndSubmit}
