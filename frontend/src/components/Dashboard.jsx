@@ -1,36 +1,44 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import WalletCard from './WalletCard'
-import ActionsPanel from './ActionsPanel'
 import TransactionHistory from './TransactionHistory'
 import Garage from './Garage'
 import CarStatus from './CarStatus'
 import RaceControls from './RaceControls'
 import RaceResults from './RaceResults'
+import TrainingModal from './TrainingModal'
 import { useRacing } from '../hooks/useRacing'
 
 const Dashboard = ({
   wallet,
   balance,
   loading,
-  txResult,
   transactions,
   activeTab,
   onRefreshBalance,
-  onSendPayment,
-  onResetWallet,
   signer,
 }) => {
   const [selectedCarId, setSelectedCarId] = useState(null)
+  const [showTrainingModal, setShowTrainingModal] = useState(false)
   const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, signer)
 
-  const handleTrain = async () => {
+  const handleTrainClick = () => {
+    if (!selectedCarId) {
+      alert('Please select a car from your garage first')
+      return
+    }
+    setShowTrainingModal(true)
+  }
+
+  const handleTrain = async (attributeIndices) => {
     if (!selectedCarId) {
       alert('Please select a car from your garage first')
       return
     }
     // Trigger backend training flow which should handle 1 XRP validation
-    await train(selectedCarId)
+    await train(selectedCarId, attributeIndices)
+    setShowTrainingModal(false)
+    onRefreshBalance() // Refresh balance after training
   }
 
   const handleTestSpeed = async () => {
@@ -90,7 +98,7 @@ const Dashboard = ({
         </div>
         <div className="lg:col-span-1">
           <RaceControls 
-            onTrain={handleTrain}
+            onTrain={handleTrainClick}
             onTestSpeed={handleTestSpeed}
             onRace={handleRace} 
             disabled={!wallet || !selectedCarId} 
@@ -113,16 +121,17 @@ const Dashboard = ({
         </div>
       )}
 
-      <ActionsPanel
-        onSendPayment={onSendPayment}
-        onResetWallet={onResetWallet}
-        loading={loading}
-        txResult={txResult}
-      />
-
       {activeTab === 'transactions' && (
         <TransactionHistory transactions={transactions} />
       )}
+
+      {/* Training Modal */}
+      <TrainingModal
+        isOpen={showTrainingModal}
+        onClose={() => setShowTrainingModal(false)}
+        onTrain={handleTrain}
+        loading={loading || raceStatus === 'training'}
+      />
     </div>
   )
 }
@@ -134,12 +143,9 @@ Dashboard.propTypes = {
   }),
   balance: PropTypes.string,
   loading: PropTypes.bool.isRequired,
-  txResult: PropTypes.string,
   transactions: PropTypes.array.isRequired,
   activeTab: PropTypes.string.isRequired,
   onRefreshBalance: PropTypes.func.isRequired,
-  onSendPayment: PropTypes.func.isRequired,
-  onResetWallet: PropTypes.func.isRequired,
   signer: PropTypes.func,
 }
 

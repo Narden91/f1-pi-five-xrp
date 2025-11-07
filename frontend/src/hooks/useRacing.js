@@ -38,7 +38,7 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     }
   }, [walletAddress])
 
-  const train = useCallback(async (carId) => {
+  const train = useCallback(async (carId, attributeIndices = null) => {
     if (!walletAddress) {
       setError('Connect a wallet first')
       return { success: false, error: 'No wallet' }
@@ -50,7 +50,7 @@ export const useRacing = (walletAddress, signAndSubmit) => {
     setError(null)
     setRaceStatus('training')
     try {
-      const res = await api.trainCar(carId, walletAddress)
+      const res = await api.trainCar(carId, walletAddress, attributeIndices)
       // If backend requires client-side signing of XRP payment, handle it
       if (res?.payment && signAndSubmit) {
         const tx = res.payment.txJSON || {
@@ -64,7 +64,7 @@ export const useRacing = (walletAddress, signAndSubmit) => {
       if (res?.success) {
         setTrainingCount(res.training_count || trainingCount + 1)
         setRaceStatus('idle')
-        return { success: true }
+        return { success: true, trainedAttributes: res.trained_attributes }
       }
       throw new Error(res?.message || 'Training failed')
     } catch (e) {

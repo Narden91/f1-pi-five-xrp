@@ -87,6 +87,7 @@ class TrainCarRequest(BaseModel):
     """Request model for training a car"""
     car_id: str
     wallet_address: str
+    attribute_indices: Optional[list[int]] = None  # None or empty = train all, otherwise train specific indices (0-9)
     
 class TrainCarResponse(BaseModel):
     """Response model for training result"""
@@ -95,6 +96,7 @@ class TrainCarResponse(BaseModel):
     training_count: int
     message: str
     payment_required: bool = True
+    trained_attributes: Optional[list[str]] = None  # Names of trained attributes (not values)
     
 class TestSpeedRequest(BaseModel):
     """Request model for speed test"""

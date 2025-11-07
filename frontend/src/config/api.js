@@ -101,9 +101,14 @@ class ApiService {
   }
 
   // Car operations
-  async trainCar(carId, walletAddress) {
-    // Costs 1 XRP on-chain; backend validates payment & applies ±<20 random deltas per secret flag set
-    return this.post('/race/train', { car_id: carId, wallet_address: walletAddress })
+  async trainCar(carId, walletAddress, attributeIndices = null) {
+    // Costs 1 XRP on-chain; backend validates payment & applies ±20 random deltas per secret flag set
+    // attributeIndices: null or [] = train all, [0,1,2] = train specific attributes
+    return this.post('/race/train', { 
+      car_id: carId, 
+      wallet_address: walletAddress,
+      attribute_indices: attributeIndices 
+    })
   }
 
   async testSpeed(carId, walletAddress) {

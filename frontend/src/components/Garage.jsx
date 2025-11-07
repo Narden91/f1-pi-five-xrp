@@ -49,8 +49,8 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
 
     // Check balance
     const balanceNum = parseFloat(balance || '0')
-    if (balanceNum < 10) {
-      setError('Insufficient balance. You need at least 10 XRP to create a car.')
+    if (balanceNum < 1) {
+      setError('Insufficient balance. You need at least 1 XRP to create a car.')
       return
     }
 
@@ -85,7 +85,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
         </h2>
         <button
           onClick={handleCreateCar}
-          disabled={loading || parseFloat(balance || '0') < 10}
+          disabled={loading || parseFloat(balance || '0') < 1}
           className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           {loading ? (
@@ -94,7 +94,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
               Creating...
             </div>
           ) : (
-            <>➕ Create New Car (10 XRP)</>
+            <>➕ Create New Car (1 XRP)</>
           )}
         </button>
       </div>
@@ -113,7 +113,7 @@ const Garage = ({ walletAddress, balance, onCarCreated }) => {
             Create your first car to start racing! Each car has 10 hidden performance flags.
           </p>
           <p className="text-xs text-orange-600 italic">
-            Cost: 10 XRP per car
+            Cost: 1 XRP per car
           </p>
         </div>
       ) : (

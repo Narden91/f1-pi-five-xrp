@@ -16,7 +16,7 @@ router = APIRouter(prefix="/race", tags=["racing"])
 async def create_car(request: CarCreateRequest):
     """
     Create a new car with 10 hidden flags
-    Cost: 10 XRP (payment should be validated before calling this)
+    Cost: 1 XRP (payment should be validated before calling this)
     """
     try:
         car = racing_service.create_car(request.wallet_address)
@@ -52,13 +52,22 @@ async def get_garage(wallet_address: str):
 @router.post("/train", response_model=TrainCarResponse)
 async def train_car(request: TrainCarRequest):
     """
-    Train a car - randomly adjusts hidden flags by ±<20
+    Train a car - randomly adjusts hidden flags by ±20
     Cost: 1 XRP (payment should be validated before calling this)
+    
+    Can train specific attributes or all:
+    - attribute_indices: None or [] = train all 10 attributes
+    - attribute_indices: [0, 1] = train only tyres and brakes
+    - attribute_indices: [2] = train only engine
+    
+    Attributes: 0=tyres, 1=brakes, 2=engine, 3=aerodynamics, 4=suspension,
+                5=transmission, 6=fuel_system, 7=electronics, 8=chassis, 9=cooling
     """
     try:
-        success, message, car = racing_service.train_car(
+        success, message, car, changes = racing_service.train_car(
             request.car_id,
-            request.wallet_address
+            request.wallet_address,
+            request.attribute_indices
         )
         
         if not success:
@@ -67,14 +76,21 @@ async def train_car(request: TrainCarRequest):
                 detail=message
             )
         
-        logger.info(f"Trained car {request.car_id} - Training #{car.training_count}")
+        # Get names of trained attributes
+        if request.attribute_indices:
+            trained_attrs = [car.ATTRIBUTE_NAMES[i] for i in request.attribute_indices if 0 <= i < 10]
+        else:
+            trained_attrs = car.ATTRIBUTE_NAMES.copy()
+        
+        logger.info(f"Trained car {request.car_id} - Training #{car.training_count} - Attributes: {trained_attrs}")
         
         return {
             'success': True,
             'car_id': car.car_id,
             'training_count': car.training_count,
             'message': message,
-            'payment_required': True
+            'payment_required': True,
+            'trained_attributes': trained_attrs
         }
     except HTTPException:
         raise

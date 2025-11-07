@@ -9,12 +9,28 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 class Car:
-    """Represents a racing car with secret flags"""
+    """Represents a racing car with secret flags representing car attributes"""
+    
+    # Car attributes mapping (for reference, never exposed to frontend)
+    ATTRIBUTE_NAMES = [
+        'tyres',        # 0: Tyre quality
+        'brakes',       # 1: Brake performance
+        'engine',       # 2: Engine power
+        'aerodynamics', # 3: Aerodynamic efficiency
+        'suspension',   # 4: Suspension quality
+        'transmission', # 5: Transmission efficiency
+        'fuel_system',  # 6: Fuel system optimization
+        'electronics',  # 7: Electronic systems
+        'chassis',      # 8: Chassis rigidity
+        'cooling'       # 9: Cooling system
+    ]
+    
     def __init__(self, car_id: str, wallet_address: str):
         self.car_id = car_id
         self.wallet_address = wallet_address
-        # Secret flags: 10 random numbers between 0-100 (NEVER exposed)
-        self.flags = [random.uniform(0, 100) for _ in range(10)]
+        # Secret flags: 10 random integers between 1-999 (NEVER exposed)
+        # Each flag represents a car attribute (tyres, brakes, engine, etc.)
+        self.flags = [random.randint(1, 999) for _ in range(10)]
         self.training_count = 0
         self.created_at = datetime.utcnow().isoformat()
         self.last_trained = None
@@ -31,16 +47,38 @@ class Car:
         self.last_speed = speed
         return speed
     
-    def train(self) -> None:
+    def train(self, attribute_indices: Optional[List[int]] = None) -> dict:
         """
-        Train the car: randomly adjust each flag by ±<20
+        Train the car: randomly adjust specified flags by ±20
+        
+        Args:
+            attribute_indices: List of attribute indices to train (0-9)
+                              If None or empty, trains all attributes
+        
+        Returns:
+            dict with changes made (for logging, not for frontend)
         """
-        for i in range(len(self.flags)):
-            delta = random.uniform(-20, 20)
-            self.flags[i] = max(0, min(100, self.flags[i] + delta))
+        if attribute_indices is None or len(attribute_indices) == 0:
+            # Train all attributes
+            attribute_indices = list(range(10))
+        
+        changes = {}
+        for i in attribute_indices:
+            if 0 <= i < 10:
+                old_value = self.flags[i]
+                delta = random.randint(-20, 20)
+                new_value = max(1, min(999, self.flags[i] + delta))
+                self.flags[i] = new_value
+                changes[self.ATTRIBUTE_NAMES[i]] = {
+                    'old': old_value,
+                    'delta': delta,
+                    'new': new_value
+                }
         
         self.training_count += 1
         self.last_trained = datetime.utcnow().isoformat()
+        
+        return changes
     
     def to_dict_safe(self) -> dict:
         """
@@ -73,7 +111,7 @@ class RacingService:
     def create_car(self, wallet_address: str) -> Car:
         """
         Create a new car with random hidden flags
-        Cost: 10 XRP (to be validated by caller)
+        Cost: 1 XRP (to be validated by caller)
         """
         car_id = self._generate_car_id(wallet_address)
         car = Car(car_id, wallet_address)
@@ -95,28 +133,42 @@ class RacingService:
         """Get a specific car"""
         return self.cars.get(car_id)
     
-    def train_car(self, car_id: str, wallet_address: str) -> Tuple[bool, str, Optional[Car]]:
+    def train_car(self, car_id: str, wallet_address: str, attribute_indices: Optional[List[int]] = None) -> Tuple[bool, str, Optional[Car], Optional[dict]]:
         """
         Train a car (costs 1 XRP, validated by caller)
-        Returns: (success, message, car)
+        
+        Args:
+            car_id: The car ID to train
+            wallet_address: Owner's wallet address
+            attribute_indices: List of attribute indices to train (0-9)
+                              None or empty list = train all attributes
+        
+        Returns: (success, message, car, changes_info)
         """
         car = self.cars.get(car_id)
         
         if not car:
-            return False, "Car not found", None
+            return False, "Car not found", None, None
         
         if car.wallet_address != wallet_address:
-            return False, "You don't own this car", None
+            return False, "You don't own this car", None, None
         
         # Store previous speed for comparison
         old_speed = car.calculate_speed() if car.last_speed is None else car.last_speed
         
-        # Apply training
-        car.train()
+        # Apply training to specified attributes
+        changes = car.train(attribute_indices)
         
         new_speed = car.calculate_speed()
         
-        return True, f"Car trained successfully (Training #{car.training_count})", car
+        # Prepare info about what was trained (attribute names only, not values)
+        if attribute_indices:
+            trained_attrs = [car.ATTRIBUTE_NAMES[i] for i in attribute_indices if 0 <= i < 10]
+            attr_msg = f"Trained: {', '.join(trained_attrs)}"
+        else:
+            attr_msg = "Trained: All attributes"
+        
+        return True, f"Car trained successfully (Training #{car.training_count}). {attr_msg}", car, changes
     
     def test_speed(self, car_id: str, wallet_address: str) -> Tuple[bool, bool, str]:
         """
