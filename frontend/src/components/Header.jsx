@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import NetworkStatus from './NetworkStatus'
 import { APP_CONFIG } from '../config'
 
-const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) => {
+const Header = ({ wallet, onLoginClick, onHomeClick }) => {
   const [scrolled, setScrolled] = useState(false)
   const isConnected = true
 
@@ -24,7 +24,7 @@ const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) 
       } border-b border-gray-200`}
     >
       <div className="w-full">
-        <div className="flex justify-between items-center h-16 px-8">
+        <div className="flex justify-between items-center h-20 px-8">
           {/* Logo */}
           <div className="flex items-center space-x-4">
             <button 
@@ -32,11 +32,11 @@ const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) 
               className="flex-shrink-0 group cursor-pointer"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                   <span className="text-white text-2xl font-bold">🏎️</span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-gray-900">
                     {APP_CONFIG.name}
                   </h1>
                 </div>
@@ -46,32 +46,6 @@ const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) 
 
           {/* Navigation & Actions */}
           <div className="flex items-center space-x-4">
-            {/* Navigation - only show when wallet exists */}
-            {wallet && (
-              <nav className="hidden md:flex items-center space-x-2 mr-4">
-                <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    activeTab === 'dashboard'
-                      ? 'text-white bg-gray-900'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  Dashboard
-                </button>
-                <button
-                  onClick={() => setActiveTab('transactions')}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    activeTab === 'transactions'
-                      ? 'text-white bg-gray-900'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  Transactions
-                </button>
-              </nav>
-            )}
-
             {/* Network Status */}
             <NetworkStatus isConnected={isConnected} />
 
@@ -93,41 +67,11 @@ const Header = ({ activeTab, setActiveTab, wallet, onLoginClick, onHomeClick }) 
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation - only show when wallet exists */}
-      {wallet && (
-        <div className="md:hidden border-t border-gray-200 bg-white/80 backdrop-blur-sm">
-          <div className="flex justify-around py-2">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 py-2 text-center text-sm font-medium transition-colors ${
-                activeTab === 'dashboard'
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600'
-              }`}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => setActiveTab('transactions')}
-              className={`flex-1 py-2 text-center text-sm font-medium transition-colors ${
-                activeTab === 'transactions'
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600'
-              }`}
-            >
-              Transactions
-            </button>
-          </div>
-        </div>
-      )}
     </header>
   )
 }
 
 Header.propTypes = {
-  activeTab: PropTypes.string.isRequired,
-  setActiveTab: PropTypes.func.isRequired,
   wallet: PropTypes.shape({
     address: PropTypes.string,
   }),

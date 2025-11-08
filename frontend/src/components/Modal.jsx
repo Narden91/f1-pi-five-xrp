@@ -32,11 +32,11 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
 
       {/* Modal */}
       <div
-        className={`relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-pink-200 ${sizeClasses[size]} w-full max-h-[90vh] overflow-hidden animate-slideUp`}
+        className={`relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-orange-200 ${sizeClasses[size]} w-full max-h-[90vh] overflow-hidden animate-slideUp`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-pink-100 bg-gradient-to-r from-pink-50 to-purple-50">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="flex items-center justify-between p-6 border-b border-orange-100 bg-gradient-to-r from-orange-50 to-yellow-50">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
             {title}
           </h2>
           <button

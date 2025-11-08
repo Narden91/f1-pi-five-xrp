@@ -57,25 +57,25 @@ const Benefits = ({ onGetStarted }) => {
 
           {/* Right side - Visual element */}
           <div className="relative">
-            <div className="relative bg-white rounded-3xl shadow-2xl p-8 border border-gray-200">
+            <div className="relative bg-white rounded-3xl shadow-2xl p-6 border border-gray-200">
               <div className="space-y-4">
                 {/* Mock racing interface */}
-                <div className="bg-gradient-to-br from-red-500 via-orange-500 to-yellow-600 rounded-2xl p-6 text-white">
+                <div className="bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 rounded-2xl p-6 text-white">
                   <div className="text-sm opacity-80 mb-2">🏎️ Your Racing Wallet</div>
                   <div className="text-4xl font-bold mb-4">250 XPF</div>
                   <div className="text-sm opacity-80">Ready to race</div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
                     <div className="text-2xl mb-2">🛠️</div>
-                    <div className="text-sm text-gray-600 mb-1">Trainings</div>
-                    <div className="text-lg font-bold text-gray-900">12</div>
+                    <div className="text-sm text-orange-600 mb-1">Trainings</div>
+                    <div className="text-lg font-bold text-orange-900">12</div>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
                     <div className="text-2xl mb-2">🏆</div>
-                    <div className="text-sm text-gray-600 mb-1">Races Won</div>
-                    <div className="text-lg font-bold text-gray-900">3</div>
+                    <div className="text-sm text-yellow-600 mb-1">Races Won</div>
+                    <div className="text-lg font-bold text-yellow-900">3</div>
                   </div>
                 </div>
 
@@ -93,9 +93,9 @@ const Benefits = ({ onGetStarted }) => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-center justify-between p-4 bg-orange-50 rounded-xl border border-orange-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl">🛠️</div>
+                      <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 text-xl">🛠️</div>
                       <div>
                         <div className="font-semibold text-gray-900">Car Trained</div>
                         <div className="text-sm text-gray-600">15 minutes ago</div>

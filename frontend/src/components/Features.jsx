@@ -4,13 +4,13 @@ const Features = () => {
       icon: '🛠️',
       title: 'Train Your Car',
       description: 'Spend 1 XPF to train your car. Each training randomly adjusts hidden performance flags by ±20.',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-orange-500 to-red-500',
     },
     {
       icon: '🏁',
       title: 'Enter Races',
       description: 'Pay 1 XPF to enter a race. Server-side AI computes speed using secret formulas. Fastest wins!',
-      color: 'from-red-500 to-orange-500',
+      color: 'from-red-500 to-yellow-500',
     },
     {
       icon: '🏆',
@@ -22,7 +22,7 @@ const Features = () => {
       icon: '🔒',
       title: 'Secure & Fair',
       description: 'All transactions on XRP Ledger. No cheating—flags and formulas never leave the server.',
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-orange-500 to-amber-500',
     },
   ]
 
@@ -42,7 +42,7 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-8 bg-white border border-gray-200 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+              className="group relative p-6 bg-white border border-gray-200 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
             >
               <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} text-white text-3xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
                 {feature.icon}

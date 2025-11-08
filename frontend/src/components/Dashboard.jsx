@@ -110,7 +110,7 @@ const Dashboard = ({
     <div className="space-y-8">
       {/* Title Section */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-amber-600 bg-clip-text text-transparent mb-2">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-amber-600 bg-clip-text text-transparent mb-4">
           🏎️ Garage Dashboard
         </h1>
         <p className="text-gray-600">Train your car, test performance, and compete in races</p>

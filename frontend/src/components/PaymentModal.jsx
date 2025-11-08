@@ -52,7 +52,7 @@ const PaymentModal = ({ isOpen, onClose, onSendPayment, loading }) => {
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             placeholder="rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY"
-            className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors font-mono text-sm"
+            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:border-red-400 transition-colors font-mono text-sm"
             disabled={loading}
           />
           <p className="mt-2 text-xs text-gray-500">
@@ -73,7 +73,7 @@ const PaymentModal = ({ isOpen, onClose, onSendPayment, loading }) => {
               placeholder="10.0"
               step="0.000001"
               min="0"
-              className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+              className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:border-red-400 transition-colors"
               disabled={loading}
             />
             <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">
@@ -88,7 +88,7 @@ const PaymentModal = ({ isOpen, onClose, onSendPayment, loading }) => {
                   key={val}
                   type="button"
                   onClick={() => setAmount(val.toString())}
-                  className="px-2 py-1 bg-gradient-to-r from-pink-100 to-purple-100 hover:from-pink-200 hover:to-purple-200 text-pink-700 rounded-lg text-xs font-medium transition-all"
+                  className="px-2 py-1 bg-gradient-to-r from-orange-100 to-yellow-100 hover:from-orange-200 hover:to-yellow-200 text-orange-700 rounded-lg text-xs font-medium transition-all"
                   disabled={loading}
                 >
                   {val} XRP
@@ -121,7 +121,7 @@ const PaymentModal = ({ isOpen, onClose, onSendPayment, loading }) => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all shadow-lg disabled:opacity-50"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl transition-all shadow-lg disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center space-x-2">

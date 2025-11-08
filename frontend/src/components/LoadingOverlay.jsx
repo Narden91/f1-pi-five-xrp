@@ -7,8 +7,8 @@ const LoadingOverlay = ({ message, submessage }) => {
         {/* Animated Logo */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl animate-pulse">
-              <span className="text-white text-5xl font-bold">X</span>
+            <div className="w-24 h-24 bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-2xl animate-pulse">
+              <span className="text-white text-5xl font-bold">🏎️</span>
             </div>
             {/* Spinning ring */}
             <div className="absolute inset-0 border-4 border-transparent border-t-white rounded-2xl animate-spin"></div>
@@ -27,9 +27,9 @@ const LoadingOverlay = ({ message, submessage }) => {
 
         {/* Loading dots animation */}
         <div className="flex justify-center items-center space-x-2">
-          <div className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-          <div className="w-3 h-3 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-          <div className="w-3 h-3 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          <div className="w-3 h-3 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-3 h-3 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+          <div className="w-3 h-3 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
         </div>
 
         {/* Environment indicator */}

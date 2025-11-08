@@ -12,16 +12,16 @@ const LandingPage = ({ onCreateWallet, loading }) => {
 
   return (
     <div className="text-center animate-fadeIn">
-      <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-2xl p-12 max-w-5xl mx-auto border-2 border-pink-100 hover:shadow-3xl transition-all duration-500">
+      <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-5xl mx-auto border-2 border-orange-100 hover:shadow-3xl transition-all duration-500">
         {/* Hero Section */}
-        <div className="mb-10">
+        <div className="mb-8">
           <div className="mb-6 animate-slideDown">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 rounded-3xl flex items-center justify-center shadow-2xl transform hover:rotate-12 transition-transform duration-300">
-              <span className="text-white text-6xl font-bold">X</span>
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 rounded-3xl flex items-center justify-center shadow-2xl transform hover:rotate-12 transition-transform duration-300">
+              <span className="text-white text-6xl font-bold">🏎️</span>
             </div>
           </div>
-          <h2 className="text-6xl font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4 animate-slideUp">
-            Welcome to XRP Ledger
+          <h2 className="text-6xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-yellow-600 bg-clip-text text-transparent mb-4 animate-slideUp">
+            Welcome to F1 AI Racing
           </h2>
           <p className="text-2xl text-gray-700 mb-4 animate-slideUp">
             Your Gateway to Digital Payments
@@ -33,26 +33,26 @@ const LandingPage = ({ onCreateWallet, loading }) => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-gradient-to-br from-pink-50 to-rose-100 p-6 rounded-2xl border-2 border-pink-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-2xl border-2 border-orange-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🚀</div>
-            <h3 className="font-bold text-pink-800 mb-2 text-lg">Lightning Fast</h3>
-            <p className="text-sm text-pink-600">3-5 second settlements</p>
+            <h3 className="font-bold text-orange-800 mb-2 text-lg">Lightning Fast</h3>
+            <p className="text-sm text-orange-600">3-5 second settlements</p>
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-2xl border-2 border-purple-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-2xl border-2 border-red-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🔒</div>
-            <h3 className="font-bold text-purple-800 mb-2 text-lg">Secure</h3>
-            <p className="text-sm text-purple-600">Enterprise-grade security</p>
+            <h3 className="font-bold text-red-800 mb-2 text-lg">Secure</h3>
+            <p className="text-sm text-red-600">Enterprise-grade security</p>
           </div>
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-100 p-6 rounded-2xl border-2 border-indigo-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-2xl border-2 border-yellow-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🌐</div>
-            <h3 className="font-bold text-indigo-800 mb-2 text-lg">Global</h3>
-            <p className="text-sm text-indigo-600">Worldwide accessibility</p>
+            <h3 className="font-bold text-yellow-800 mb-2 text-lg">Global</h3>
+            <p className="text-sm text-yellow-600">Worldwide accessibility</p>
           </div>
-          <div className="bg-gradient-to-br from-cyan-50 to-teal-100 p-6 rounded-2xl border-2 border-cyan-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-6 rounded-2xl border-2 border-amber-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">💎</div>
-            <h3 className="font-bold text-cyan-800 mb-2 text-lg">Low Cost</h3>
-            <p className="text-sm text-cyan-600">Minimal transaction fees</p>
+            <h3 className="font-bold text-amber-800 mb-2 text-lg">Low Cost</h3>
+            <p className="text-sm text-amber-600">Minimal transaction fees</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ const LandingPage = ({ onCreateWallet, loading }) => {
           <button
             onClick={() => setShowImportModal(true)}
             disabled={loading}
-            className="bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 border-2 border-gray-300 hover:border-purple-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg min-w-[250px]"
+            className="bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 border-2 border-gray-300 hover:border-orange-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg min-w-[250px]"
           >
             <span className="flex items-center justify-center space-x-2">
               <span>📥</span>
@@ -89,8 +89,8 @@ const LandingPage = ({ onCreateWallet, loading }) => {
         </div>
 
         {/* Info Badge */}
-        <div className="mt-8 inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-blue-200 rounded-full">
-          <span className="text-blue-700 font-semibold text-sm flex items-center space-x-2">
+        <div className="mt-6 inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-100 to-yellow-100 border-2 border-orange-200 rounded-full">
+          <span className="text-orange-700 font-semibold text-sm flex items-center space-x-2">
             <span>🧪</span>
             <span>Testnet Environment - Safe for Development</span>
           </span>

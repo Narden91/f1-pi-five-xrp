@@ -50,7 +50,7 @@ const WalletImportModal = ({ isOpen, onClose, onImport, loading }) => {
             onChange={(e) => setSeed(e.target.value)}
             placeholder="Enter your XRP wallet seed here..."
             rows={4}
-            className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors font-mono text-sm resize-none"
+            className="w-full px-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:border-red-400 transition-colors font-mono text-sm resize-none"
             disabled={loading}
           />
           <p className="mt-2 text-xs text-gray-500">
@@ -79,7 +79,7 @@ const WalletImportModal = ({ isOpen, onClose, onImport, loading }) => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all shadow-lg disabled:opacity-50"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl transition-all shadow-lg disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center space-x-2">
