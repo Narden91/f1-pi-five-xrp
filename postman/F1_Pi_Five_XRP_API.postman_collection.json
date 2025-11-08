@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "XRP Hackathon API",
-    "description": "Collection per testare tutte le API del progetto hackathon XRP",
+    "name": "F1 AI Pi Five XRP API",
+    "description": "Collection per testare tutte le API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [

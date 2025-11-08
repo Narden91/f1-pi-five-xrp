@@ -77,7 +77,7 @@ f1-pi-five-xrp/
 │   │   └── config/           # Frontend configuration
 │   ├── package.json
 │   └── vite.config.js
-├── postman/                    # API test collection
+├── postman/                    # Postman API test collection
 └── docker-compose.yml          # Container orchestration
 ```
 
