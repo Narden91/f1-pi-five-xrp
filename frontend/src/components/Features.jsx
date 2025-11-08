@@ -27,7 +27,7 @@ const Features = () => {
   ]
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-50">
       <div className="w-full px-8">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
