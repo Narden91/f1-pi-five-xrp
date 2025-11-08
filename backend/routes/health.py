@@ -1,4 +1,3 @@
-"""Health check routes"""
 from fastapi import APIRouter, status
 from models import HealthResponse
 import xrpl
@@ -13,9 +12,6 @@ router = APIRouter(tags=["Health"])
     status_code=status.HTTP_200_OK
 )
 async def health_check():
-    """
-    Health check endpoint - verifies API and testnet connectivity
-    """
     try:
         client = JsonRpcClient(settings.TESTNET_URL)
         server_info = client.request(xrpl.models.requests.ServerInfo())
@@ -36,7 +32,6 @@ async def health_check():
 
 @router.get("/")
 async def root():
-    """API information endpoint"""
     return {
         "name": settings.APP_NAME,
         "version": settings.APP_VERSION,

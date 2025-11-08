@@ -1,7 +1,3 @@
-/**
- * Application configuration and constants
- */
-
 export const APP_CONFIG = {
   name: import.meta.env.VITE_APP_NAME || 'F1 AI Racing',
   version: '1.0.0',

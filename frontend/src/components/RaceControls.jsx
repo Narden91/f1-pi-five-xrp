@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types'
 import ActionButton from './ActionButton'
 
-/**
- * RaceControls
- * Provides Train Car, Test Speed, and Join Race buttons.
- */
 const RaceControls = ({ onTrain, onTestSpeed, onRace, disabled, loading }) => {
   return (
     <div className="bg-gradient-to-br from-red-50 to-orange-50 backdrop-blur rounded-2xl p-6 border-2 border-red-200 shadow-lg hover:shadow-xl transition-all">

@@ -1,4 +1,3 @@
-"""Payment routes"""
 from fastapi import APIRouter, HTTPException, status
 from models import PaymentRequest, PaymentResponse, ErrorResponse
 from services import PaymentService
@@ -17,13 +16,6 @@ payment_service = PaymentService()
     }
 )
 async def send_payment(payment: PaymentRequest):
-    """
-    Send XRP payment
-    
-    - **sender_seed**: Wallet seed of the sender
-    - **destination**: Recipient's XRP address
-    - **amount**: Amount in XRP (must be positive)
-    """
     try:
         result = payment_service.send_payment(
             sender_seed=payment.sender_seed,
@@ -47,12 +39,6 @@ async def send_payment(payment: PaymentRequest):
     responses={500: {"model": ErrorResponse}}
 )
 async def get_transaction_history(address: str, limit: int = 10):
-    """
-    Get transaction history for an address
-    
-    - **address**: XRP Ledger address
-    - **limit**: Maximum number of transactions (default: 10, max: 50)
-    """
     try:
         if limit > 50:
             limit = 50

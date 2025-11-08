@@ -1,4 +1,3 @@
-"""Wallet routes"""
 from fastapi import APIRouter, HTTPException, status
 from models import WalletCreateRequest, WalletResponse, BalanceResponse, ErrorResponse
 from services import WalletService
@@ -13,11 +12,6 @@ wallet_service = WalletService()
     responses={500: {"model": ErrorResponse}}
 )
 async def create_wallet(wallet_data: WalletCreateRequest):
-    """
-    Create a new XRP wallet or import from seed
-    
-    - **seed**: Optional seed for wallet import (leave empty to generate new)
-    """
     try:
         result = wallet_service.create_wallet(wallet_data.seed)
         return result
@@ -33,11 +27,6 @@ async def create_wallet(wallet_data: WalletCreateRequest):
     responses={500: {"model": ErrorResponse}}
 )
 async def get_balance(address: str):
-    """
-    Get XRP balance for a wallet address
-    
-    - **address**: XRP Ledger address
-    """
     try:
         result = wallet_service.get_balance(address)
         return result
@@ -52,11 +41,6 @@ async def get_balance(address: str):
     responses={500: {"model": ErrorResponse}}
 )
 async def get_account_info(address: str):
-    """
-    Get detailed account information
-    
-    - **address**: XRP Ledger address
-    """
     try:
         result = wallet_service.get_account_info(address)
         return result

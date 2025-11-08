@@ -1,9 +1,5 @@
 import PropTypes from 'prop-types'
 
-/**
- * CarStatus
- * Car Card in Garage Dashboard - shows abstract car info without exposing secret flags or formula.
- */
 const CarStatus = ({ trainingCount, raceStatus, carId, lastSpeedTest }) => {
   const getSpeedTestDisplay = () => {
     if (!lastSpeedTest) {

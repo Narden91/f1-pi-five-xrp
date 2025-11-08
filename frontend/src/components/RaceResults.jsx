@@ -1,12 +1,6 @@
 import PropTypes from 'prop-types'
 
-/**
- * RaceResults
- * Shows redacted race outcomes without revealing computation details.
- * Displays lobby status before race and placement after race.
- */
 const RaceResults = ({ race, playerAddress, raceStatus, waitingPlayers }) => {
-  // Show lobby status if waiting
   if (raceStatus === 'queued' || raceStatus === 'waiting') {
     return (
       <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-6 border-2 border-yellow-300 shadow-lg">
@@ -22,7 +16,6 @@ const RaceResults = ({ race, playerAddress, raceStatus, waitingPlayers }) => {
     )
   }
 
-  // Show race results if completed
   if (!race) {
     return (
       <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 border-2 border-gray-300 shadow-lg">

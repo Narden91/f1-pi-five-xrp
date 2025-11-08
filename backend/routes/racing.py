@@ -1,4 +1,3 @@
-"""Racing routes for car management and racing"""
 from fastapi import APIRouter, HTTPException, status
 from models import (
     CarCreateRequest, CarResponse, GarageResponse,
@@ -15,10 +14,6 @@ router = APIRouter(prefix="/race", tags=["racing"])
 
 @router.post("/car/create", response_model=CarResponse, status_code=status.HTTP_201_CREATED)
 async def create_car(request: CarCreateRequest):
-    """
-    Create a new car with 10 hidden flags
-    Cost: 1 XRP (payment processed here via blockchain)
-    """
     try:
         success, car, message = racing_service.create_car(request.wallet_address, request.wallet_seed)
         
@@ -42,10 +37,6 @@ async def create_car(request: CarCreateRequest):
 
 @router.get("/garage/{wallet_address}", response_model=GarageResponse)
 async def get_garage(wallet_address: str):
-    """
-    Get all cars for a wallet address
-    Returns car info WITHOUT exposing secret flags
-    """
     try:
         cars = racing_service.get_garage(wallet_address)
         return {
@@ -62,18 +53,6 @@ async def get_garage(wallet_address: str):
 
 @router.post("/train", response_model=TrainCarResponse)
 async def train_car(request: TrainCarRequest):
-    """
-    Train a car - randomly adjusts hidden flags by ±20
-    Cost: 1 XRP (payment processed here via blockchain)
-    
-    Can train specific attributes or all:
-    - attribute_indices: None or [] = train all 10 attributes
-    - attribute_indices: [0, 1] = train only tyres and brakes
-    - attribute_indices: [2] = train only engine
-    
-    Attributes: 0=tyres, 1=brakes, 2=engine, 3=aerodynamics, 4=suspension,
-                5=transmission, 6=fuel_system, 7=electronics, 8=chassis, 9=cooling
-    """
     try:
         success, message, car, changes = racing_service.train_car(
             request.car_id,
@@ -89,7 +68,6 @@ async def train_car(request: TrainCarRequest):
                 detail=message
             )
         
-        # Get names of trained attributes
         if request.attribute_indices:
             trained_attrs = [car.ATTRIBUTE_NAMES[i] for i in request.attribute_indices if 0 <= i < 10]
         else:
@@ -117,10 +95,6 @@ async def train_car(request: TrainCarRequest):
 
 @router.post("/test", response_model=TestSpeedResponse)
 async def test_speed(request: TestSpeedRequest):
-    """
-    Test car speed - FREE
-    Returns the actual speed value and whether it improved
-    """
     try:
         success, improved, message, speed_value = racing_service.test_speed(
             request.car_id,
@@ -153,12 +127,6 @@ async def test_speed(request: TestSpeedRequest):
 
 @router.post("/enter", response_model=RaceResponse)
 async def enter_race(request: EnterRaceRequest):
-    """
-    Enter a race with your car
-    Cost: 1 XRP (payment processed here via blockchain)
-    Winner receives 100 XRP prize
-    Returns only rank and winner, NOT speed values or flags
-    """
     try:
         success, race_result = racing_service.enter_race(
             request.car_id,
@@ -196,10 +164,6 @@ async def enter_race(request: EnterRaceRequest):
 
 @router.post("/car/sell", response_model=SellCarResponse)
 async def sell_car(request: SellCarRequest):
-    """
-    Sell a car for 0.5 XRP refund
-    Removes the car from garage permanently
-    """
     try:
         success, message, refund_amount = racing_service.sell_car(
             request.car_id,

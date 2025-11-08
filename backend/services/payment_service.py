@@ -1,4 +1,3 @@
-"""Payment service for XRP transactions"""
 import xrpl
 from xrpl.clients import JsonRpcClient
 from xrpl.wallet import Wallet
@@ -9,7 +8,6 @@ from typing import Dict, Any
 from config import settings
 
 class PaymentService:
-    """Service for managing XRP payments"""
     
     def __init__(self):
         self.testnet_url = settings.TESTNET_URL
@@ -21,29 +19,15 @@ class PaymentService:
         amount: float,
         memo: str = None
     ) -> Dict[str, Any]:
-        """
-        Send XRP payment
-        
-        Args:
-            sender_seed: Sender wallet seed
-            destination: Destination address
-            amount: Amount in XRP
-            memo: Optional memo for the transaction
-            
-        Returns:
-            Dictionary containing transaction result
-        """
         client = JsonRpcClient(self.testnet_url)
         sender_wallet = Wallet.from_seed(sender_seed)
         
-        # Create payment transaction
         payment_tx = Payment(
             account=sender_wallet.address,
             amount=xrp_to_drops(amount),
             destination=destination,
         )
         
-        # Add memo if provided
         if memo:
             payment_tx.memos = [
                 xrpl.models.transactions.Memo(
@@ -51,7 +35,6 @@ class PaymentService:
                 )
             ]
         
-        # Submit and wait for validation
         response = submit_and_wait(payment_tx, client, sender_wallet)
         
         result_data = {
@@ -61,23 +44,12 @@ class PaymentService:
             "validated": response.result.get('validated', False),
         }
         
-        # Add fee if available
         if 'Fee' in response.result:
             result_data['fee'] = response.result['Fee']
         
         return result_data
     
     def get_transaction_history(self, address: str, limit: int = 10) -> list:
-        """
-        Get transaction history for an address
-        
-        Args:
-            address: XRP Ledger address
-            limit: Maximum number of transactions to retrieve
-            
-        Returns:
-            List of transactions
-        """
         client = JsonRpcClient(self.testnet_url)
         
         tx_request = xrpl.models.requests.AccountTx(
