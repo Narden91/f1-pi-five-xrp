@@ -25,6 +25,7 @@ const Dashboard = ({
   const [showTrainingModal, setShowTrainingModal] = useState(false)
   const [showRaceSimulation, setShowRaceSimulation] = useState(false)
   const [selectedCarSpeed, setSelectedCarSpeed] = useState(null)
+  const [lastRaceResult, setLastRaceResult] = useState(null)
   const [garageKey, setGarageKey] = useState(0) // Key to force garage reload
   const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, wallet?.seed, signer)
 
@@ -84,6 +85,13 @@ const Dashboard = ({
       return
     }
     
+    // Check if user has enough balance for entry fee
+    const balanceNum = parseFloat(balance || '0')
+    if (balanceNum < 1) {
+      alert('Insufficient balance. You need at least 1 XRP to enter a race.')
+      return
+    }
+    
     // Get car speed for simulation (use lastSpeedTest or default)
     const carSpeed = lastSpeedTest?.speed || 3.0
     setSelectedCarSpeed(carSpeed)
@@ -92,26 +100,41 @@ const Dashboard = ({
     setShowRaceSimulation(true)
   }
   
-  const handleRaceSimulationFinish = async (simulationResults) => {
-    // Call the actual backend race endpoint
+  const handleRaceSimulationFinish = async (simResults) => {
+    // Close simulation after a short delay
+    setTimeout(() => {
+      setShowRaceSimulation(false)
+    }, 500)
+    
+    // Call backend race endpoint
     const result = await enterRace(selectedCarId)
     
-    // Close simulation
-    setShowRaceSimulation(false)
-    
-    // HACKATHON DEMO: Manually update balance for UI feedback
+    // Update balance based on race outcome
     if (result.success && onBalanceUpdate) {
       let newBalance = parseFloat(balance) - 1 // Deduct 1 XRP entry fee
       
-      // If player won, add 100 XRP prize
-      if (result.race && result.race.prizeAwarded) {
+      // Check if player won based on simulation results
+      const playerWon = simResults.playerRank === 1
+      
+      if (playerWon) {
+        // Player won! Award 100 XRP prize
         newBalance += 100
-        alert('🎉 Congratulations! You won 100 XRP!')
-      } else {
-        alert(`Race finished! You placed #${simulationResults.playerRank}`)
+        setTimeout(() => {
+          alert('🎉 Congratulations! You won the race and earned 100 XRP!')
+        }, 1000)
       }
       
       onBalanceUpdate(newBalance.toFixed(2))
+      
+      // Store race result for display in Race Results card
+      setLastRaceResult({
+        id: result.race?.id || `race-${Date.now()}`,
+        winner: playerWon ? wallet?.address : simResults.winner,
+        winnerCarId: simResults.winnerName,
+        yourRank: simResults.playerRank,
+        participants: simResults.totalParticipants,
+        prizeAwarded: playerWon
+      })
     }
   }
 
@@ -178,7 +201,7 @@ const Dashboard = ({
         </div>
         <div className="lg:col-span-1">
           <RaceResults 
-            race={lastRace} 
+            race={lastRaceResult || lastRace}
             playerAddress={wallet?.address}
             raceStatus={raceStatus}
             waitingPlayers={{ current: 3, max: 8 }}
