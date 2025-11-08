@@ -61,8 +61,13 @@ const Dashboard = ({
       alert('Please select a car from your garage first')
       return
     }
-    // Test speed - no payment, just qualitative feedback
-    await testSpeed(selectedCarId)
+    // Test speed - displays actual speed value
+    const result = await testSpeed(selectedCarId)
+    
+    if (result.success && result.message) {
+      // Show speed test result
+      alert(`🏁 Speed Test Result\n\n${result.message}`)
+    }
   }
 
   const handleRace = async () => {

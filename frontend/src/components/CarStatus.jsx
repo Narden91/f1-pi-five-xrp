@@ -9,6 +9,34 @@ const CarStatus = ({ trainingCount, raceStatus, carId, lastSpeedTest }) => {
     if (!lastSpeedTest) {
       return <span className="text-gray-500">Not tested yet</span>
     }
+    
+    if (lastSpeedTest.speed !== undefined) {
+      return (
+        <div>
+          <div className="text-2xl font-bold text-orange-600 mb-1">
+            {lastSpeedTest.speed.toFixed(2)} km/h
+          </div>
+          {lastSpeedTest.improved ? (
+            <span className="text-green-600 font-semibold flex items-center gap-1 text-xs">
+              🚀 Speed improved!
+            </span>
+          ) : lastSpeedTest.message?.includes('decreased') ? (
+            <span className="text-red-600 font-semibold flex items-center gap-1 text-xs">
+              ⚠️ Speed decreased
+            </span>
+          ) : lastSpeedTest.message?.includes('unchanged') ? (
+            <span className="text-blue-600 font-semibold flex items-center gap-1 text-xs">
+              ➡️ Speed unchanged
+            </span>
+          ) : (
+            <span className="text-gray-600 font-semibold flex items-center gap-1 text-xs">
+              📊 Baseline recorded
+            </span>
+          )}
+        </div>
+      )
+    }
+    
     return lastSpeedTest.improved ? (
       <span className="text-green-600 font-semibold flex items-center gap-1">
         Tested ✅ <span className="text-xs">(Speed improved!)</span>
@@ -37,8 +65,8 @@ const CarStatus = ({ trainingCount, raceStatus, carId, lastSpeedTest }) => {
         </div>
 
         <div className="bg-white/60 rounded-lg p-3 border border-orange-200">
-          <span className="text-xs font-semibold text-orange-700 uppercase">Last Speed Test</span>
-          <p className="text-sm mt-1">{getSpeedTestDisplay()}</p>
+          <span className="text-xs font-semibold text-orange-700 uppercase">Current Speed</span>
+          <div className="mt-1">{getSpeedTestDisplay()}</div>
         </div>
 
         <div className="bg-white/60 rounded-lg p-3 border border-orange-200">
@@ -59,6 +87,8 @@ CarStatus.propTypes = {
   carId: PropTypes.string,
   lastSpeedTest: PropTypes.shape({
     improved: PropTypes.bool,
+    speed: PropTypes.number,
+    message: PropTypes.string,
   }),
 }
 

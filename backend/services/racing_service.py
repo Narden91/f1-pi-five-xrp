@@ -41,20 +41,43 @@ class Car:
         self.last_trained = None
         self.last_speed = None  # Cached speed value
         
+        # Generate unique weights for this car (makes each car different)
+        # Base weights with small random variation per car
+        base_weights = [0.15, 0.12, 0.10, 0.08, 0.11, 0.09, 0.13, 0.07, 0.08, 0.07]
+        self.weights = [w + random.uniform(-0.02, 0.02) for w in base_weights]
+        # Normalize so weights sum to 1.0
+        total = sum(self.weights)
+        self.weights = [w / total for w in self.weights]
+        
     def calculate_speed(self) -> float:
         """
         Calculate speed using secret formula based on flags
-        Formula: speed = weighted sum of flags with secret weights
+        Formula: speed = weighted sum of flags with this car's unique weights
+        Speed is scaled to be physically feasible for F1 cars (150-350 km/h)
         """
-        # Secret weights for each flag (never exposed)
-        weights = [0.15, 0.12, 0.10, 0.08, 0.11, 0.09, 0.13, 0.07, 0.08, 0.07]
-        speed = sum(f * w for f, w in zip(self.flags, weights))
+        # Use this car's unique weights (makes each car different)
+        # Raw speed calculation (weighted sum of flags 1-999)
+        raw_speed = sum(f * w for f, w in zip(self.flags, self.weights))
+        
+        # Scale to realistic F1 speed range: 150-350 km/h
+        # Raw speed range is approximately 100-900 (with flags 1-999 and weights ~0.1)
+        # Map: 100 → 150 km/h, 900 → 350 km/h
+        min_raw, max_raw = 100, 900
+        min_speed, max_speed = 150, 350
+        
+        # Linear scaling
+        speed = min_speed + (raw_speed - min_raw) * (max_speed - min_speed) / (max_raw - min_raw)
+        
+        # Clamp to valid range
+        speed = max(min_speed, min(max_speed, speed))
+        
         self.last_speed = speed
         return speed
     
     def train(self, attribute_indices: Optional[List[int]] = None) -> dict:
         """
         Train the car: randomly adjust specified flags by ±20
+        Training is pseudorandom - it can improve, worsen, or have mixed results
         
         Args:
             attribute_indices: List of attribute indices to train (0-9)
@@ -71,6 +94,8 @@ class Car:
         for i in attribute_indices:
             if 0 <= i < 10:
                 old_value = self.flags[i]
+                # Pseudorandom delta: can be positive, negative, or zero
+                # Range: -20 to +20 (inclusive)
                 delta = random.randint(-20, 20)
                 new_value = max(1, min(999, self.flags[i] + delta))
                 self.flags[i] = new_value
@@ -82,6 +107,9 @@ class Car:
         
         self.training_count += 1
         self.last_trained = datetime.utcnow().isoformat()
+        
+        # Invalidate cached speed since attributes changed
+        self.last_speed = None
         
         return changes
     
@@ -227,9 +255,11 @@ class RacingService:
         new_car_id = self._generate_car_id(wallet_address)
         new_car = Car(new_car_id, wallet_address)
         
-        # Copy flags from base car
+        # Copy attributes from base car (to maintain car identity)
         new_car.flags = base_car.flags.copy()
+        new_car.weights = base_car.weights.copy()  # Preserve car's unique weights!
         new_car.training_count = base_car.training_count  # Inherit training count
+        new_car.last_speed = base_car.last_speed  # Preserve last known speed for comparison
         
         # Apply training to specified attributes of the NEW car
         changes = new_car.train(attribute_indices)
@@ -250,34 +280,47 @@ class RacingService:
         
         return True, f"New car created from training (Training #{new_car.training_count}). {attr_msg}. Payment tx: {payment_result}", new_car, changes
     
-    def test_speed(self, car_id: str, wallet_address: str) -> Tuple[bool, bool, str]:
+    def test_speed(self, car_id: str, wallet_address: str) -> Tuple[bool, bool, str, Optional[float]]:
         """
-        Test car speed - FREE, only returns if speed improved (not the actual value)
-        Returns: (success, improved, message)
+        Test car speed - FREE, returns the actual speed value and if it improved
+        Returns: (success, improved, message, speed_value)
         """
         car = self.cars.get(car_id)
         
         if not car:
-            return False, False, "Car not found"
+            return False, False, "Car not found", None
         
         if car.wallet_address != wallet_address:
-            return False, False, "You don't own this car"
-        
-        if car.training_count == 0:
-            return True, False, "Train your car first before testing"
+            return False, False, "You don't own this car", None
         
         # Calculate current speed
         current_speed = car.calculate_speed()
         
         # Compare with last known speed (or use a baseline)
         if car.last_speed is None:
+            # First speed test - establish baseline
             car.last_speed = current_speed
-            return True, False, "Baseline speed recorded"
+            improved = False
+            message = f"Baseline speed: {current_speed:.2f} km/h"
+        else:
+            # Calculate speed difference
+            speed_diff = current_speed - car.last_speed
+            improved = speed_diff > 0
+            
+            if speed_diff > 0:
+                # Speed improved
+                message = f"🚀 Speed improved! {car.last_speed:.2f} → {current_speed:.2f} km/h (+{speed_diff:.2f})"
+            elif speed_diff < 0:
+                # Speed got worse
+                message = f"⚠️ Speed decreased: {car.last_speed:.2f} → {current_speed:.2f} km/h ({speed_diff:.2f})"
+            else:
+                # No change
+                message = f"Speed unchanged: {current_speed:.2f} km/h"
+            
+            # Update last speed for next comparison
+            car.last_speed = current_speed
         
-        improved = current_speed > car.last_speed
-        car.last_speed = current_speed
-        
-        return True, improved, "Speed test completed"
+        return True, improved, message, current_speed
     
     def enter_race(self, car_id: str, wallet_address: str, wallet_seed: str) -> Tuple[bool, Optional[dict]]:
         """

@@ -111,6 +111,7 @@ class TestSpeedResponse(BaseModel):
     car_id: str
     improved: bool
     message: str
+    speed: Optional[float] = None  # Actual speed value in km/h
 
 class EnterRaceRequest(BaseModel):
     """Request model for entering a race"""

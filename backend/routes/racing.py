@@ -117,10 +117,10 @@ async def train_car(request: TrainCarRequest):
 async def test_speed(request: TestSpeedRequest):
     """
     Test car speed - FREE
-    Returns only whether speed improved, NOT the actual speed value
+    Returns the actual speed value and whether it improved
     """
     try:
-        success, improved, message = racing_service.test_speed(
+        success, improved, message, speed_value = racing_service.test_speed(
             request.car_id,
             request.wallet_address
         )
@@ -131,13 +131,14 @@ async def test_speed(request: TestSpeedRequest):
                 detail=message
             )
         
-        logger.info(f"Speed test for car {request.car_id}: improved={improved}")
+        logger.info(f"Speed test for car {request.car_id}: speed={speed_value:.2f} km/h, improved={improved}")
         
         return {
             'success': True,
             'car_id': request.car_id,
             'improved': improved,
-            'message': message
+            'message': message,
+            'speed': speed_value
         }
     except HTTPException:
         raise

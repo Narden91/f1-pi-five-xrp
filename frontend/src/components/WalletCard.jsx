@@ -13,7 +13,13 @@ const WalletCard = ({ wallet, balance, onRefresh, connectionType }) => {
           <span>Wallet Dashboard</span>
         </h2>
         <button
-          onClick={onRefresh}
+          onClick={() => {
+            // HACKATHON DEMO: Warn user that refresh will reset balance
+            if (!confirm('⚠️ DEMO MODE: Refreshing will reset your balance to blockchain value (10 XRP). This is because payments are mocked for demo. Continue?')) {
+              return
+            }
+            onRefresh()
+          }}
           className="bg-gradient-to-r from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 text-orange-700 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
         >
           🔄 Refresh

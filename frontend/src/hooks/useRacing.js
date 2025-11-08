@@ -94,16 +94,18 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
     setError(null)
     setRaceStatus('testing')
     try {
-      // Call backend to test speed - returns only qualitative feedback
+      // Call backend to test speed - returns speed value and improvement status
       const res = await api.testSpeed(carId, walletAddress)
       if (res?.success) {
-        // Backend returns { improved: true/false }
+        // Backend returns { improved: true/false, speed: number, message: string }
         setLastSpeedTest({
           improved: res.improved || false,
+          speed: res.speed,
+          message: res.message,
           timestamp: new Date().toISOString()
         })
         setRaceStatus('idle')
-        return { success: true, improved: res.improved }
+        return { success: true, improved: res.improved, speed: res.speed, message: res.message }
       }
       throw new Error(res?.message || 'Speed test failed')
     } catch (e) {

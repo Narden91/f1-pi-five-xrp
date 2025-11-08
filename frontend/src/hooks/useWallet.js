@@ -213,10 +213,15 @@ export const useWallet = () => {
   }, [])
 
   useEffect(() => {
-    if (wallet) {
-      const interval = setInterval(refreshBalance, 30000)
-      return () => clearInterval(interval)
-    }
+    // HACKATHON DEMO: Disable auto-refresh to prevent balance from resetting
+    // The auto-refresh queries the blockchain which still shows 10 XRP
+    // since we're mocking payments for demo purposes
+    
+    // Original code (commented out for demo):
+    // if (wallet) {
+    //   const interval = setInterval(refreshBalance, 30000)
+    //   return () => clearInterval(interval)
+    // }
   }, [wallet, refreshBalance])
 
   return {

@@ -8,6 +8,8 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
   const [error, setError] = useState(null)
   const [selectedCar, setSelectedCar] = useState(null)
   const [hasCreatedCar, setHasCreatedCar] = useState(false)
+  const [carSpeeds, setCarSpeeds] = useState({}) // Store tested speeds for each car
+  const [testingSpeed, setTestingSpeed] = useState({}) // Loading state for speed tests
 
   useEffect(() => {
     const loadGarage = async () => {
@@ -44,6 +46,27 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
     } catch (err) {
       console.error('Error loading garage:', err)
       setError('Failed to load garage')
+    }
+  }
+
+  const testCarSpeed = async (carId) => {
+    setTestingSpeed(prev => ({ ...prev, [carId]: true }))
+    try {
+      const result = await api.testSpeed(carId, walletAddress)
+      if (result.success && result.speed) {
+        setCarSpeeds(prev => ({
+          ...prev,
+          [carId]: {
+            speed: result.speed,
+            message: result.message,
+            improved: result.improved
+          }
+        }))
+      }
+    } catch (err) {
+      console.error('Error testing speed:', err)
+    } finally {
+      setTestingSpeed(prev => ({ ...prev, [carId]: false }))
     }
   }
 
@@ -158,6 +181,31 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
                   <p className="text-gray-600">
                     <span className="font-semibold">Training:</span> {car.training_count}x
                   </p>
+                  
+                  {/* Display speed if tested */}
+                  {carSpeeds[car.car_id] && (
+                    <div className={`my-2 p-2 rounded-lg border ${
+                      carSpeeds[car.car_id].speed >= 280
+                        ? 'bg-green-50 border-green-300'
+                        : carSpeeds[car.car_id].speed >= 220
+                        ? 'bg-orange-50 border-orange-300'
+                        : 'bg-red-50 border-red-300'
+                    }`}>
+                      <p className={`text-lg font-bold ${
+                        carSpeeds[car.car_id].speed >= 280
+                          ? 'text-green-600'
+                          : carSpeeds[car.car_id].speed >= 220
+                          ? 'text-orange-600'
+                          : 'text-red-600'
+                      }`}>
+                        {carSpeeds[car.car_id].speed.toFixed(1)} km/h
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Top Speed
+                      </p>
+                    </div>
+                  )}
+                  
                   <p className="text-gray-600">
                     <span className="font-semibold">Created:</span>{' '}
                     {new Date(car.created_at).toLocaleDateString()}
@@ -169,9 +217,26 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
                     </p>
                   )}
                 </div>
+                
+                {/* Test Speed Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    testCarSpeed(car.car_id)
+                  }}
+                  disabled={testingSpeed[car.car_id]}
+                  className={`mt-3 w-full px-3 py-2 text-white rounded-lg text-xs font-semibold transition-colors ${
+                    testingSpeed[car.car_id]
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-500 hover:bg-blue-600'
+                  }`}
+                >
+                  {testingSpeed[car.car_id] ? '⏳ Testing...' : '🏁 Test Speed'}
+                </button>
+                
                 {selectedCar === car.car_id && (
                   <div className="mt-3 px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-semibold">
-                    Selected
+                    Selected for Race
                   </div>
                 )}
               </div>
