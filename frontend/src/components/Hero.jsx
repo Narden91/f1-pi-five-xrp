@@ -12,7 +12,7 @@ const Hero = ({ onGetStarted }) => {
 
       <div className="relative flex-1 flex flex-col justify-between w-full py-20 text-center px-4">
         {/* Main heading */}
-        <div className="animate-fadeIn pt-32">
+        <div className="animate-fadeIn pt-16">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-8 leading-tight">
             🏎️ F1 AI Racing
             <br />
@@ -22,7 +22,7 @@ const Hero = ({ onGetStarted }) => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-4xl mx-auto leading-relaxed px-4">
-            Build and optimize your AI-powered racing machine on the XRP Ledger. Every training session refines your car's performance. Compete against other racers in real-time tournaments where only the fastest win. Master the art of strategic upgrades and claim your 100 XPF prize.
+            Build and optimize your AI-powered racing machine on the XRP Ledger. Every training session refines your car's performance. Compete against other racers in real-time tournaments where only the fastest win. Master the art of strategic upgrades and claim your 100 XRP prize.
           </p>
 
           {/* CTA Buttons */}
@@ -47,11 +47,11 @@ const Hero = ({ onGetStarted }) => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-8 w-full max-w-5xl mx-auto pb-20 animate-slideUp px-4">
           <div className="text-center">
-            <div className="text-5xl md:text-6xl font-bold text-gray-900 mb-3">1 XPF</div>
+            <div className="text-5xl md:text-6xl font-bold text-gray-900 mb-3">1 XRP</div>
             <div className="text-sm md:text-base text-gray-600 uppercase tracking-wide font-semibold">Training Cost</div>
           </div>
           <div className="text-center sm:border-x border-gray-200">
-            <div className="text-5xl md:text-6xl font-bold text-gray-900 mb-3">100 XPF</div>
+            <div className="text-5xl md:text-6xl font-bold text-gray-900 mb-3">100 XRP</div>
             <div className="text-sm md:text-base text-gray-600 uppercase tracking-wide font-semibold">Winner Prize</div>
           </div>
           <div className="text-center">

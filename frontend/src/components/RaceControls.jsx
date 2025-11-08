@@ -32,7 +32,7 @@ const RaceControls = ({ onTrain, onTestSpeed, onRace, disabled, loading }) => {
           <div className="text-center">
             <div className="text-2xl mb-1">🚀</div>
             <div className="font-semibold">Join Race</div>
-            <div className="text-[10px] mt-1 opacity-80">Costs 1 XPF • Winner gets 100 XPF</div>
+            <div className="text-[10px] mt-1 opacity-80">Costs 1 XRP • Winner gets 100 XRP</div>
           </div>
         </ActionButton>
       </div>

@@ -3,19 +3,19 @@ const Features = () => {
     {
       icon: '🛠️',
       title: 'Train Your Car',
-      description: 'Spend 1 XPF to train your car. Each training randomly adjusts hidden performance flags by ±20.',
+      description: 'Spend 1 XRP to train your car. Each training randomly adjusts hidden performance flags by ±20.',
       color: 'from-orange-500 to-red-500',
     },
     {
       icon: '🏁',
       title: 'Enter Races',
-      description: 'Pay 1 XPF to enter a race. Server-side AI computes speed using secret formulas. Fastest wins!',
+      description: 'Pay 1 XRP to enter a race. Server-side AI computes speed using secret formulas. Fastest wins!',
       color: 'from-red-500 to-yellow-500',
     },
     {
       icon: '🏆',
       title: 'Win Big',
-      description: 'Winner of each race takes home 100 XPF. Rankings shown, but speed calculations stay secret.',
+      description: 'Winner of each race takes home 100 XRP. Rankings shown, but speed calculations stay secret.',
       color: 'from-yellow-500 to-amber-500',
     },
     {
@@ -34,7 +34,7 @@ const Features = () => {
             How F1 AI Racing Works
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Train smart, race hard, and compete for XPF prizes on the XRP Ledger
+            Train smart, race hard, and compete for XRP prizes on the XRP Ledger
           </p>
         </div>
 

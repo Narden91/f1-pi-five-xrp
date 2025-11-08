@@ -9,7 +9,7 @@ export const useWallet = () => {
   const [transactions, setTransactions] = useState([])
   const [connectionType, setConnectionType] = useState(null) // 'created' | 'gemwallet'
   
-  // Generic signer for arbitrary XRPL transactions (tx object). Useful for issued currency (XPF) ops.
+  // Generic signer for arbitrary XRPL transactions (tx object). Useful for issued currency (XRP) ops.
   const signAndSubmit = useCallback(async (tx) => {
     if (!wallet) throw new Error('No wallet available')
     

@@ -98,7 +98,7 @@ function App() {
         <>
           <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200">
             <div className="w-full px-8">
-              <div className="flex justify-between items-center h-16">
+              <div className="flex justify-between items-center h-24">
                 <button 
                   onClick={handleHomeClick}
                   className="flex items-center space-x-3 cursor-pointer group"

@@ -9,7 +9,7 @@ const CTA = ({ onGetStarted }) => {
             Ready to race?
           </h2>
           <p className="text-xl text-white/90 mb-12">
-            Join the F1 AI Racing competition. Train your car, enter races, and win XPF tokens on the XRP Ledger.
+            Join the F1 AI Racing competition. Train your car, enter races, and win XRP tokens on the XRP Ledger.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -31,11 +31,11 @@ const CTA = ({ onGetStarted }) => {
           <div className="mt-16 pt-16 border-t border-white/20">
             <div className="grid grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-white mb-2">1 XPF</div>
+                <div className="text-3xl font-bold text-white mb-2">1 XRP</div>
                 <div className="text-sm text-white/70">Per Training</div>
               </div>
               <div className="border-x border-white/20">
-                <div className="text-3xl font-bold text-white mb-2">100 XPF</div>
+                <div className="text-3xl font-bold text-white mb-2">100 XRP</div>
                 <div className="text-sm text-white/70">Winner Prize</div>
               </div>
               <div>

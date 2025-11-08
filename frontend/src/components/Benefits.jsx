@@ -14,8 +14,8 @@ const Benefits = ({ onGetStarted }) => {
     },
     {
       title: 'Real blockchain rewards',
-      description: 'Win 100 XPF per race. All transactions verified on XRP Ledger for transparency and security.',
-      image: '�',
+      description: 'Win 100 XRP per race. All transactions verified on XRP Ledger for transparency and security.',
+      image: '💎',
     },
   ]
 
@@ -62,7 +62,7 @@ const Benefits = ({ onGetStarted }) => {
                 {/* Mock racing interface */}
                 <div className="bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 rounded-2xl p-6 text-white">
                   <div className="text-sm opacity-80 mb-2">🏎️ Your Racing Wallet</div>
-                  <div className="text-4xl font-bold mb-4">250 XPF</div>
+                  <div className="text-4xl font-bold mb-4">250 XRP</div>
                   <div className="text-sm opacity-80">Ready to race</div>
                 </div>
                 
@@ -89,7 +89,7 @@ const Benefits = ({ onGetStarted }) => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-green-600">+100 XPF</div>
+                      <div className="font-bold text-green-600">+100 XRP</div>
                     </div>
                   </div>
                   
@@ -102,7 +102,7 @@ const Benefits = ({ onGetStarted }) => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-gray-900">-1 XPF</div>
+                      <div className="font-bold text-gray-900">-1 XRP</div>
                     </div>
                   </div>
                 </div>

@@ -24,7 +24,7 @@ const Header = ({ wallet, onLoginClick, onHomeClick }) => {
       } border-b border-gray-200`}
     >
       <div className="w-full">
-        <div className="flex justify-between items-center h-20 px-8">
+        <div className="flex justify-between items-center h-24 px-8">
           {/* Logo */}
           <div className="flex items-center space-x-4">
             <button 

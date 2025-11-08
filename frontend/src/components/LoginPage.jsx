@@ -258,7 +258,7 @@ const LoginPage = ({ onLogin, onBack }) => {
 
         {/* Footer Note */}
         <p className="mt-8 text-center text-sm text-gray-500">
-          🏁 Testnet racing environment • Train for 1 XPF • Win 100 XPF per race
+          🏁 Testnet racing environment • Train for 1 XRP • Win 100 XRP per race
         </p>
         
         {/* Debug Button */}

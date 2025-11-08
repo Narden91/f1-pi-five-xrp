@@ -69,7 +69,7 @@ const RaceResults = ({ race, playerAddress, raceStatus, waitingPlayers }) => {
 
         {race?.prizeAwarded && (
           <div className="bg-gradient-to-r from-yellow-100 to-amber-100 rounded-lg p-3 border-2 border-yellow-400">
-            <p className="text-emerald-700 font-bold text-center">+100 XPF awarded 💰</p>
+            <p className="text-emerald-700 font-bold text-center">+100 XRP awarded 💰</p>
           </div>
         )}
       </div>
