@@ -16,9 +16,12 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange,
   const selectCar = useCallback((carId) => {
     setSelectedCar(carId)
     if (onCarSelected) {
-      onCarSelected(carId)
+      // Find the car data to pass along
+      const carData = cars.find(c => c.car_id === carId)
+      const speed = carSpeeds[carId]?.speed
+      onCarSelected(carId, { ...carData, speed })
     }
-  }, [onCarSelected])
+  }, [onCarSelected, cars, carSpeeds])
 
   useEffect(() => {
     const loadGarage = async () => {

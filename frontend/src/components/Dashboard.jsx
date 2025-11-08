@@ -7,6 +7,7 @@ import CarStatus from './CarStatus'
 import RaceControls from './RaceControls'
 import RaceResults from './RaceResults'
 import TrainingModal from './TrainingModal'
+import RaceSimulation3D from './RaceSimulation3D'
 import { useRacing } from '../hooks/useRacing'
 
 const Dashboard = ({
@@ -22,6 +23,8 @@ const Dashboard = ({
 }) => {
   const [selectedCarId, setSelectedCarId] = useState(null)
   const [showTrainingModal, setShowTrainingModal] = useState(false)
+  const [showRaceSimulation, setShowRaceSimulation] = useState(false)
+  const [selectedCarSpeed, setSelectedCarSpeed] = useState(null)
   const [garageKey, setGarageKey] = useState(0) // Key to force garage reload
   const { trainingCount, lastRace, raceStatus, error, lastSpeedTest, carId, train, testSpeed, enterRace } = useRacing(wallet?.address, wallet?.seed, signer)
 
@@ -80,7 +83,21 @@ const Dashboard = ({
       alert('Please select a car from your garage first')
       return
     }
+    
+    // Get car speed for simulation (use lastSpeedTest or default)
+    const carSpeed = lastSpeedTest?.speed || 3.0
+    setSelectedCarSpeed(carSpeed)
+    
+    // Show 3D simulation
+    setShowRaceSimulation(true)
+  }
+  
+  const handleRaceSimulationFinish = async (simulationResults) => {
+    // Call the actual backend race endpoint
     const result = await enterRace(selectedCarId)
+    
+    // Close simulation
+    setShowRaceSimulation(false)
     
     // HACKATHON DEMO: Manually update balance for UI feedback
     if (result.success && onBalanceUpdate) {
@@ -90,6 +107,8 @@ const Dashboard = ({
       if (result.race && result.race.prizeAwarded) {
         newBalance += 100
         alert('🎉 Congratulations! You won 100 XRP!')
+      } else {
+        alert(`Race finished! You placed #${simulationResults.playerRank}`)
       }
       
       onBalanceUpdate(newBalance.toFixed(2))
@@ -102,8 +121,12 @@ const Dashboard = ({
     setGarageKey(prev => prev + 1)
   }
 
-  const handleCarSelected = (carId) => {
+  const handleCarSelected = (carId, carData) => {
     setSelectedCarId(carId)
+    // Store car speed for simulation
+    if (carData?.speed) {
+      setSelectedCarSpeed(carData.speed)
+    }
   }
   
   return (
@@ -179,6 +202,17 @@ const Dashboard = ({
         onClose={() => setShowTrainingModal(false)}
         onTrain={handleTrain}
         loading={loading || raceStatus === 'training'}
+      />
+      
+      {/* 3D Race Simulation */}
+      <RaceSimulation3D
+        isOpen={showRaceSimulation}
+        onClose={() => setShowRaceSimulation(false)}
+        playerCar={{
+          id: selectedCarId || carId,
+          speed: selectedCarSpeed || lastSpeedTest?.speed || 3.0,
+        }}
+        onRaceFinish={handleRaceSimulationFinish}
       />
     </div>
   )
