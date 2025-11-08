@@ -4,7 +4,8 @@ from models import (
     CarCreateRequest, CarResponse, GarageResponse,
     TrainCarRequest, TrainCarResponse,
     TestSpeedRequest, TestSpeedResponse,
-    EnterRaceRequest, RaceResponse
+    EnterRaceRequest, RaceResponse,
+    SellCarRequest, SellCarResponse
 )
 from services.racing_service import racing_service
 import logging
@@ -102,7 +103,8 @@ async def train_car(request: TrainCarRequest):
             'training_count': car.training_count,
             'message': message,
             'payment_required': True,
-            'trained_attributes': trained_attrs
+            'trained_attributes': trained_attrs,
+            'speed': car.last_speed  # Return the new car's speed
         }
     except HTTPException:
         raise
@@ -191,3 +193,39 @@ async def enter_race(request: EnterRaceRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to enter race: {str(e)}"
         )
+
+@router.post("/car/sell", response_model=SellCarResponse)
+async def sell_car(request: SellCarRequest):
+    """
+    Sell a car for 0.5 XRP refund
+    Removes the car from garage permanently
+    """
+    try:
+        success, message, refund_amount = racing_service.sell_car(
+            request.car_id,
+            request.wallet_address
+        )
+        
+        if not success:
+            logger.warning(f"Car sale failed: {message}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=message
+            )
+        
+        logger.info(f"Car {request.car_id} sold by {request.wallet_address} for {refund_amount} XRP")
+        
+        return {
+            'success': True,
+            'message': message,
+            'refund_amount': refund_amount
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error selling car: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to sell car: {str(e)}"
+        )
+

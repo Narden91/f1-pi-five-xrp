@@ -132,6 +132,14 @@ class ApiService {
     })
   }
 
+  async sellCar(carId, walletAddress) {
+    // Sell a car for 0.5 XRP refund
+    return this.post('/race/car/sell', {
+      car_id: carId,
+      wallet_address: walletAddress
+    })
+  }
+
   async getLatestRace(address) {
     // Fetch latest race summary; backend must redact secret values
     const query = address ? `?address=${encodeURIComponent(address)}` : ''

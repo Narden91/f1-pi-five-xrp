@@ -99,6 +99,7 @@ class TrainCarResponse(BaseModel):
     message: str
     payment_required: bool = True
     trained_attributes: Optional[list[str]] = None  # Names of trained attributes (not values)
+    speed: Optional[float] = None  # New car's speed after training
     
 class TestSpeedRequest(BaseModel):
     """Request model for speed test"""
@@ -129,3 +130,14 @@ class RaceResponse(BaseModel):
     total_participants: int
     prize_awarded: bool
     message: str
+
+class SellCarRequest(BaseModel):
+    """Request model for selling a car"""
+    car_id: str
+    wallet_address: str
+    
+class SellCarResponse(BaseModel):
+    """Response model for selling a car"""
+    success: bool
+    message: str
+    refund_amount: float

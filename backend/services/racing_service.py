@@ -259,10 +259,17 @@ class RacingService:
         new_car.flags = base_car.flags.copy()
         new_car.weights = base_car.weights.copy()  # Preserve car's unique weights!
         new_car.training_count = base_car.training_count  # Inherit training count
-        new_car.last_speed = base_car.last_speed  # Preserve last known speed for comparison
+        
+        # Store the base car's current speed BEFORE training for comparison
+        base_speed = base_car.last_speed if base_car.last_speed is not None else base_car.calculate_speed()
         
         # Apply training to specified attributes of the NEW car
         changes = new_car.train(attribute_indices)
+        
+        # Calculate new speed after training and set it for comparison
+        new_speed = new_car.calculate_speed()
+        # Store base speed as reference for improvement detection
+        new_car.last_speed = new_speed
         
         # Store the new car
         self.cars[new_car_id] = new_car
@@ -386,6 +393,32 @@ class RacingService:
         self.races.append(race_result)
         
         return True, race_result
+    
+    def sell_car(self, car_id: str, wallet_address: str) -> Tuple[bool, str, float]:
+        """
+        Sell a car for 0.5 XRP
+        Returns: (success, message, refund_amount)
+        """
+        car = self.cars.get(car_id)
+        
+        if not car:
+            return False, "Car not found", 0.0
+        
+        if car.wallet_address != wallet_address:
+            return False, "You don't own this car", 0.0
+        
+        # Remove car from garage
+        if wallet_address in self.garage and car_id in self.garage[wallet_address]:
+            self.garage[wallet_address].remove(car_id)
+        
+        # Remove car from cars dictionary
+        del self.cars[car_id]
+        
+        # In demo mode, just return success with amount
+        # In production, this would send 0.5 XRP back to the wallet
+        refund_amount = 0.5
+        
+        return True, f"Car {car_id} sold for {refund_amount} XRP", refund_amount
 
 # Global service instance
 racing_service = RacingService()

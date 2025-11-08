@@ -72,7 +72,12 @@ export const useRacing = (walletAddress, walletSeed, signAndSubmit) => {
       if (res?.success) {
         setTrainingCount(res.training_count || trainingCount + 1)
         setRaceStatus('idle')
-        return { success: true, trainedAttributes: res.trained_attributes }
+        return { 
+          success: true, 
+          trainedAttributes: res.trained_attributes,
+          newCarId: res.car_id,  // New car ID after training
+          speed: res.speed  // New car's speed
+        }
       }
       throw new Error(res?.message || 'Training failed')
     } catch (e) {

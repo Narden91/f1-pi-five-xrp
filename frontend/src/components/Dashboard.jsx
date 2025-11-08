@@ -48,6 +48,11 @@ const Dashboard = ({
         onBalanceUpdate(newBalance)
       }
       
+      // Update selected car to the new car created from training
+      if (result.newCarId) {
+        setSelectedCarId(result.newCarId)
+      }
+      
       // Force garage to reload to show new car
       setGarageKey(prev => prev + 1)
       
@@ -77,10 +82,17 @@ const Dashboard = ({
     }
     const result = await enterRace(selectedCarId)
     
-    // HACKATHON DEMO: Manually deduct balance for UI feedback
+    // HACKATHON DEMO: Manually update balance for UI feedback
     if (result.success && onBalanceUpdate) {
-      const newBalance = (parseFloat(balance) - 1).toFixed(2)
-      onBalanceUpdate(newBalance)
+      let newBalance = parseFloat(balance) - 1 // Deduct 1 XRP entry fee
+      
+      // If player won, add 100 XRP prize
+      if (result.race && result.race.prizeAwarded) {
+        newBalance += 100
+        alert('🎉 Congratulations! You won 100 XRP!')
+      }
+      
+      onBalanceUpdate(newBalance.toFixed(2))
     }
   }
 
@@ -88,6 +100,10 @@ const Dashboard = ({
     setSelectedCarId(car.car_id)
     // Force garage reload
     setGarageKey(prev => prev + 1)
+  }
+
+  const handleCarSelected = (carId) => {
+    setSelectedCarId(carId)
   }
   
   return (
@@ -115,6 +131,7 @@ const Dashboard = ({
         wallet={wallet}
         onCarCreated={handleCarCreated}
         onBalanceChange={onBalanceUpdate}
+        onCarSelected={handleCarSelected}
       />
 
       {/* Racing Game Panel */}

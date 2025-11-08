@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import api from '../config/api'
 
-const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange }) => {
+const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange, onCarSelected }) => {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -10,6 +10,15 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
   const [hasCreatedCar, setHasCreatedCar] = useState(false)
   const [carSpeeds, setCarSpeeds] = useState({}) // Store tested speeds for each car
   const [testingSpeed, setTestingSpeed] = useState({}) // Loading state for speed tests
+  const [sellingCar, setSellingCar] = useState({}) // Loading state for selling cars
+
+  // Define selectCar BEFORE useEffect so it can be used
+  const selectCar = useCallback((carId) => {
+    setSelectedCar(carId)
+    if (onCarSelected) {
+      onCarSelected(carId)
+    }
+  }, [onCarSelected])
 
   useEffect(() => {
     const loadGarage = async () => {
@@ -26,7 +35,7 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
         
         // Auto-select first car if none selected
         if (data.cars?.length > 0 && !selectedCar) {
-          setSelectedCar(data.cars[0].car_id)
+          selectCar(data.cars[0].car_id)
         }
       } catch (err) {
         console.error('Error loading garage:', err)
@@ -35,7 +44,7 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
     }
 
     loadGarage()
-  }, [walletAddress, selectedCar])
+  }, [walletAddress, selectedCar, selectCar])
 
   const loadGarage = async () => {
     if (!walletAddress) return
@@ -70,6 +79,57 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
     }
   }
 
+  const sellCar = async (carId) => {
+    // Confirm before selling
+    if (!window.confirm(`Are you sure you want to sell this car for 0.5 XRP? This cannot be undone.`)) {
+      return
+    }
+
+    setSellingCar(prev => ({ ...prev, [carId]: true }))
+    try {
+      const result = await api.sellCar(carId, walletAddress)
+      
+      if (result.success) {
+        // Update balance: add 0.5 XRP refund
+        if (onBalanceChange) {
+          const newBalance = (parseFloat(balance) + result.refund_amount).toFixed(2)
+          onBalanceChange(newBalance)
+        }
+        
+        // Remove car from local state
+        setCars(prevCars => {
+          const remainingCars = prevCars.filter(c => c.car_id !== carId)
+          
+          // Clear selection if this was the selected car
+          if (selectedCar === carId) {
+            // Auto-select another car if available
+            if (remainingCars.length > 0) {
+              selectCar(remainingCars[0].car_id)
+            } else {
+              selectCar(null)
+            }
+          }
+          
+          return remainingCars
+        })
+        
+        // Remove speed data
+        setCarSpeeds(prev => {
+          const newSpeeds = { ...prev }
+          delete newSpeeds[carId]
+          return newSpeeds
+        })
+        
+        alert(`✅ ${result.message}`)
+      }
+    } catch (err) {
+      console.error('Error selling car:', err)
+      setError(`Failed to sell car: ${err.message}`)
+    } finally {
+      setSellingCar(prev => ({ ...prev, [carId]: false }))
+    }
+  }
+
   const handleCreateCar = async () => {
     if (!walletAddress) {
       setError('No wallet connected')
@@ -97,7 +157,7 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
       
       if (result.car_id) {
         await loadGarage()
-        setSelectedCar(result.car_id)
+        selectCar(result.car_id)
         setHasCreatedCar(true)
         
         // HACKATHON DEMO: Manually update balance since payments are mocked
@@ -165,7 +225,7 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
           {cars.map((car) => (
             <div
               key={car.car_id}
-              onClick={() => setSelectedCar(car.car_id)}
+              onClick={() => selectCar(car.car_id)}
               className={`cursor-pointer transition-all duration-300 rounded-xl p-6 border-2 ${
                 selectedCar === car.car_id
                   ? 'bg-gradient-to-br from-orange-100 to-red-100 border-orange-500 shadow-lg scale-105'
@@ -234,6 +294,22 @@ const Garage = ({ walletAddress, balance, wallet, onCarCreated, onBalanceChange 
                   {testingSpeed[car.car_id] ? '⏳ Testing...' : '🏁 Test Speed'}
                 </button>
                 
+                {/* Sell Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    sellCar(car.car_id)
+                  }}
+                  disabled={sellingCar[car.car_id]}
+                  className={`mt-2 w-full px-3 py-2 text-white rounded-lg text-xs font-semibold transition-colors ${
+                    sellingCar[car.car_id]
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-red-500 hover:bg-red-600'
+                  }`}
+                >
+                  {sellingCar[car.car_id] ? '⏳ Selling...' : '💰 Sell Car (0.5 XRP)'}
+                </button>
+                
                 {selectedCar === car.car_id && (
                   <div className="mt-3 px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-semibold">
                     Selected for Race
@@ -262,6 +338,7 @@ Garage.propTypes = {
   wallet: PropTypes.object,
   onCarCreated: PropTypes.func,
   onBalanceChange: PropTypes.func,
+  onCarSelected: PropTypes.func,
 }
 
 export default Garage
